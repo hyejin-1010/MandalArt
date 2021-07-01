@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:madal_art/common/fuctions.dart';
 import 'package:madal_art/screens/mandalart/components/item.dart';
+import 'package:madal_art/screens/detail/components/map.dart';
 
 class DetailScreen extends StatefulWidget {
   DetailScreen({
@@ -45,52 +47,53 @@ class _DetailScreenState extends State<DetailScreen> {
     final double mandalSize = Functions.getMandalSize(size) - 100;
 
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            Container(
-              alignment: Alignment.topLeft,
-              child: IconButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                icon: Icon(Icons.arrow_back),
-              ),
-            ),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  if (widget.index > 2)
-                    _buildArrowIconButton('top'),
-                  Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        widget.index % 3 != 0
-                          ? _buildArrowIconButton('left')
-                          : SizedBox(width: 40.0),
-                        SizedBox(
-                          width: mandalSize,
-                          height: mandalSize,
-                          child: Hero(
-                            tag: 'mandal-item-${widget.index}',
-                            child: Item(),
-                          ),
-                        ),
-                        widget.index % 3 != 2
-                          ? _buildArrowIconButton('right')
-                          : SizedBox(width: 40.0),
-                      ],
-                    ),
-                  ),
-                  if (widget.index < 6)
-                    _buildArrowIconButton('bottom'),
-                ],
-              ),
-            ),
-          ],
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0.0,
+        leading: IconButton(
+          onPressed: () => Get.back(),
+          icon: Icon(Icons.arrow_back_ios),
+          color: Colors.black,
         ),
+      ),
+      body: Stack(
+        children: [
+          Positioned(
+            top: 0,
+            right: 20,
+            child: MandalArtMap(index: widget.index, size: 100.0),
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              if (widget.index > 2)
+                _buildArrowIconButton('top'),
+              Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    widget.index % 3 != 0
+                        ? _buildArrowIconButton('left')
+                        : SizedBox(width: 40.0),
+                    SizedBox(
+                      width: mandalSize,
+                      height: mandalSize,
+                      child: Hero(
+                        tag: 'mandal-item-${widget.index}',
+                        child: Item(),
+                      ),
+                    ),
+                    widget.index % 3 != 2
+                        ? _buildArrowIconButton('right')
+                        : SizedBox(width: 40.0),
+                  ],
+                ),
+              ),
+              if (widget.index < 6)
+                _buildArrowIconButton('bottom'),
+            ],
+          ),
+        ],
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:madal_art/common/fuctions.dart';
 import 'package:madal_art/screens/detail/detail.dart';
 import 'package:madal_art/screens/mandalart/components/item.dart';
@@ -58,8 +59,6 @@ class _MandalArtScreenState extends State<MandalArtScreen> {
   }
 
   _pushDetailView(int index) {
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (BuildContext context) => DetailScreen(index: index),
-    ));
+    Get.to(DetailScreen(index: index), transition: Transition.fade);
   }
 }
