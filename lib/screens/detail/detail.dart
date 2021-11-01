@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:madal_art/common/fuctions.dart';
 import 'package:madal_art/controllers/data_controller.dart';
 import 'package:madal_art/components/item.dart';
+import 'package:madal_art/dialogs/edit_dialog.dart';
+import 'package:madal_art/models/mandalart.dart';
 import 'package:madal_art/screens/detail/components/map.dart';
 
 class DetailScreen extends StatefulWidget {
@@ -85,7 +87,14 @@ class _DetailScreenState extends State<DetailScreen> {
                         child: Item(
                           group: widget.index,
                           onClick: (int index) {
-                            _dataController.updateItem(widget.index, index, 'TEST');
+                            MandalArtModel item = _dataController.data[widget.index]![index]!;
+                            Get.dialog(EditDialog(
+                              content: item.content,
+                              done: (String content) {
+                                _dataController.updateItem(widget.index, index, content);
+                                Get.back();
+                              },
+                            ));
                           },
                         ),
                       ),
