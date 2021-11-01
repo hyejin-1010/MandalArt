@@ -80,7 +80,9 @@ class _DetailScreenState extends State<DetailScreen> {
                       height: mandalSize,
                       child: Hero(
                         tag: 'mandal-item-${widget.index}',
-                        child: Item(),
+                        child: Item(
+                          group: widget.index,
+                        ),
                       ),
                     ),
                     widget.index % 3 != 2

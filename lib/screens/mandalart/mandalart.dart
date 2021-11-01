@@ -46,7 +46,9 @@ class _MandalArtScreenState extends State<MandalArtScreen> {
                     ),
                     child: Hero(
                       tag: 'mandal-item-$index',
-                      child: Item(),
+                      child: Item(
+                        group: index,
+                      ),
                     ),
                   ),
                 );
