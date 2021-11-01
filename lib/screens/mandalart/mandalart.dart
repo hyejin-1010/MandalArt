@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:madal_art/common/fuctions.dart';
 import 'package:madal_art/screens/detail/detail.dart';
-import 'package:madal_art/screens/mandalart/components/item.dart';
+import 'package:madal_art/components/item.dart';
 
 class MandalArtScreen extends StatefulWidget {
   @override
