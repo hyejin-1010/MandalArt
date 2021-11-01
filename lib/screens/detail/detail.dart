@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:madal_art/common/fuctions.dart';
+import 'package:madal_art/controllers/data_controller.dart';
 import 'package:madal_art/screens/mandalart/components/item.dart';
 import 'package:madal_art/screens/detail/components/map.dart';
 
@@ -44,6 +45,7 @@ class _DetailScreenState extends State<DetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final DataController _dataController = Get.find<DataController>();
     final double mandalSize = Functions.getMandalSize(size) - 100;
 
     return Scaffold(
@@ -82,6 +84,9 @@ class _DetailScreenState extends State<DetailScreen> {
                         tag: 'mandal-item-${widget.index}',
                         child: Item(
                           group: widget.index,
+                          onClick: (int index) {
+                            _dataController.updateItem(widget.index, index, 'TEST');
+                          },
                         ),
                       ),
                     ),
