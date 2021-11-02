@@ -15,6 +15,7 @@ class MandalArtMap extends StatelessWidget {
       width: size,
       height: size,
       child: GridView.builder(
+        padding: EdgeInsets.zero,
         itemCount: 9,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
