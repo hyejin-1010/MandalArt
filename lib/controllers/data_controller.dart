@@ -14,8 +14,6 @@ class DataController extends GetxController {
       await _openDatabase();
       await _getMandalArtData();
     } catch (err) { throw err; }
-
-    update();
   }
 
   Future<bool> updateItem(int group, int index, String content) async {
