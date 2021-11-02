@@ -17,10 +17,12 @@ class Item extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
+      padding: EdgeInsets.zero,
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
+        childAspectRatio: 1,
       ),
       itemCount: 9,
       itemBuilder: (BuildContext context, int index) {

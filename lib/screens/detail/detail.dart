@@ -37,6 +37,7 @@ const Map<String, dynamic> ARROW_DATA = {
 };
 
 class _DetailScreenState extends State<DetailScreen> {
+  final DataController _dataController = Get.find<DataController>();
   late Size size;
 
   @override
@@ -45,69 +46,76 @@ class _DetailScreenState extends State<DetailScreen> {
     size = MediaQuery.of(context).size;
   }
 
+  Widget _buildMandalArtView() {
+    return Hero(
+      tag: 'mandal-item-${widget.index}',
+      child: Item(
+        group: widget.index,
+        onClick: (int index) {
+          MandalArtModel item = _dataController.data[widget.index]![index]!;
+          Get.dialog(EditDialog(
+            content: item.content,
+            done: (String content) {
+              _dataController.updateItem(widget.index, index, content);
+              Get.back();
+            },
+          ));
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final DataController _dataController = Get.find<DataController>();
     final double mandalSize = Functions.getMandalSize(size) - 100;
+    final EdgeInsets padding = MediaQuery.of(context).padding;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-        leading: IconButton(
-          onPressed: () => Get.back(),
-          icon: Icon(Icons.arrow_back_ios),
-          color: Colors.black,
-        ),
-      ),
       body: Stack(
         children: [
           Positioned(
-            top: 0,
+            top: padding.top,
             right: 20,
             child: MandalArtMap(index: widget.index, size: 100.0),
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              if (widget.index > 2)
-                _buildArrowIconButton('top'),
-              Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    widget.index % 3 != 0
-                        ? _buildArrowIconButton('left')
-                        : SizedBox(width: 40.0),
-                    SizedBox(
-                      width: mandalSize,
-                      height: mandalSize,
-                      child: Hero(
-                        tag: 'mandal-item-${widget.index}',
-                        child: Item(
-                          group: widget.index,
-                          onClick: (int index) {
-                            MandalArtModel item = _dataController.data[widget.index]![index]!;
-                            Get.dialog(EditDialog(
-                              content: item.content,
-                              done: (String content) {
-                                _dataController.updateItem(widget.index, index, content);
-                                Get.back();
-                              },
-                            ));
-                          },
-                        ),
+          Positioned(
+            top: padding.top,
+            left: 20,
+            child: IconButton(
+              onPressed: () => Get.back(),
+              icon: Icon(Icons.arrow_back_ios),
+              color: Colors.black,
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(top: (padding.top + 100.0), bottom: padding.bottom),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                if (widget.index > 2)
+                  _buildArrowIconButton('top'),
+                Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      widget.index % 3 != 0
+                          ? _buildArrowIconButton('left')
+                          : SizedBox(width: 40.0),
+                      SizedBox(
+                        width: mandalSize,
+                        height: mandalSize,
+                        child: _buildMandalArtView(),
                       ),
-                    ),
-                    widget.index % 3 != 2
-                        ? _buildArrowIconButton('right')
-                        : SizedBox(width: 40.0),
-                  ],
+                      widget.index % 3 != 2
+                          ? _buildArrowIconButton('right')
+                          : SizedBox(width: 40.0),
+                    ],
+                  ),
                 ),
-              ),
-              if (widget.index < 6)
-                _buildArrowIconButton('bottom'),
-            ],
+                if (widget.index < 6)
+                  _buildArrowIconButton('bottom'),
+              ],
+            ),
           ),
         ],
       ),
