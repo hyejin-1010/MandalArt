@@ -29,7 +29,17 @@ class _MandalArtScreenState extends State<MandalArtScreen> {
   Widget _buildTopView(int index) {
     return Material(
       color: Colors.transparent,
-      child: Text(_dataController.data[4]?[index]?.content ?? ''),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 15.0),
+        child: Text(
+          _dataController.data[4]?[index]?.content ?? '',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 22.0,
+            fontWeight: index == 4 ? FontWeight.bold : FontWeight.w500,
+          ),
+        ),
+      ),
     );
   }
 
@@ -47,7 +57,7 @@ class _MandalArtScreenState extends State<MandalArtScreen> {
           tag: 'mandal-item-$index',
           child: topView
             ? _buildTopView(index)
-            : Item(group: index),
+            : Item(group: index, allView: true),
         ),
       ),
     );

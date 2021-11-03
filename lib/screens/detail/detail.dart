@@ -89,32 +89,35 @@ class _DetailScreenState extends State<DetailScreen> {
           ),
           Container(
             margin: EdgeInsets.only(top: (padding.top + 100.0), bottom: padding.bottom),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                if (widget.index > 2)
-                  _buildArrowIconButton('top'),
-                Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      widget.index % 3 != 0
-                          ? _buildArrowIconButton('left')
-                          : SizedBox(width: 40.0),
-                      SizedBox(
-                        width: mandalSize,
-                        height: mandalSize,
-                        child: _buildMandalArtView(),
-                      ),
-                      widget.index % 3 != 2
-                          ? _buildArrowIconButton('right')
-                          : SizedBox(width: 40.0),
-                    ],
+            alignment: Alignment.center,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  if (widget.index > 2)
+                    _buildArrowIconButton('top'),
+                  Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        widget.index % 3 != 0
+                            ? _buildArrowIconButton('left')
+                            : SizedBox(width: 40.0),
+                        SizedBox(
+                          width: mandalSize,
+                          height: mandalSize,
+                          child: _buildMandalArtView(),
+                        ),
+                        widget.index % 3 != 2
+                            ? _buildArrowIconButton('right')
+                            : SizedBox(width: 40.0),
+                      ],
+                    ),
                   ),
-                ),
-                if (widget.index < 6)
-                  _buildArrowIconButton('bottom'),
-              ],
+                  if (widget.index < 6)
+                    _buildArrowIconButton('bottom'),
+                ],
+              ),
             ),
           ),
         ],

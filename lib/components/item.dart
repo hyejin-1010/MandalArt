@@ -7,9 +7,11 @@ class Item extends StatelessWidget {
   Item({
     Key? key,
     required this.group,
+    this.allView = false,
     this.onClick,
   }) : super(key: key);
 
+  final bool allView;
   final int group;
   final DataController _dataController = Get.find<DataController>();
   final Function(int)? onClick;
@@ -42,11 +44,14 @@ class Item extends StatelessWidget {
                 child: Center(
                   child: Text(
                     text,
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 20.0,
+                      fontSize: allView ? 10.0 : 20.0,
                       fontWeight: isTop ? FontWeight.bold : FontWeight.normal,
+                      overflow: TextOverflow.ellipsis,
                     ),
+                    maxLines: allView ? 2 : 3,
                   ),
                 ),
               ),
