@@ -29,6 +29,7 @@ class _MyAppState extends State<MyApp> {
     return GetMaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
+        fontFamily: 'NanumSquare',
         primarySwatch: Colors.blue,
       ),
       debugShowCheckedModeBanner: false,
