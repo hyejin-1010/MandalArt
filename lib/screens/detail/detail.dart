@@ -19,20 +19,20 @@ class DetailScreen extends StatefulWidget {
 
 const Map<String, dynamic> ARROW_DATA = {
   'top': {
-    'begin': Offset(0.0, -1.0),
     'index': -3,
+    'transition': Transition.upToDown,
   },
   'right': {
-    'begin': Offset(1.0, 0.0),
     'index': 1,
+    'transition': Transition.rightToLeft,
   },
   'bottom': {
-    'begin': Offset(0.0, 1.0),
     'index': 3,
+    'transition': Transition.downToUp,
   },
   'left': {
-    'begin': Offset(-1.0, 0.0),
     'index': -1,
+    'transition': Transition.leftToRight,
   },
 };
 
@@ -146,20 +146,12 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   void _clickArrow (String arrow) {
-    int arrowNum = ARROW_DATA[arrow]['index'] ?? 0;
-    int index = widget.index + arrowNum;
-    Navigator.of(context).pushReplacement(PageRouteBuilder(
-      pageBuilder: (_, __, ___) => DetailScreen(index: index),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        const Offset end = Offset.zero;
-        Offset begin = ARROW_DATA[arrow]?['begin'] ?? Offset.zero;
-        var curve = Curves.ease;
-        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-        return SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        );
-      },
-    ));
+    dynamic arrowData = ARROW_DATA[arrow] ?? {};
+    int arrowNum = arrowData['index'] ?? 0;
+    Get.off(
+      () => DetailScreen(index: widget.index + arrowNum),
+      preventDuplicates: false,
+      transition: arrowData['transition'],
+    );
   }
 }
