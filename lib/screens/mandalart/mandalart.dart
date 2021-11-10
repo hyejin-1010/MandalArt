@@ -4,6 +4,7 @@ import 'package:madal_art/common/fuctions.dart';
 import 'package:madal_art/controllers/data_controller.dart';
 import 'package:madal_art/screens/detail/detail.dart';
 import 'package:madal_art/components/item.dart';
+import 'package:madal_art/screens/mandalart/components/custom_drawer.dart';
 
 class MandalArtScreen extends StatefulWidget {
   @override
@@ -19,6 +20,8 @@ class _MandalArtScreenState extends State<MandalArtScreen> {
   final DataController _dataController = Get.find<DataController>();
   late Size _size;
   ViewType _viewType = ViewType.ALL;
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void didChangeDependencies() {
@@ -94,9 +97,24 @@ class _MandalArtScreenState extends State<MandalArtScreen> {
     );
   }
 
+  Widget _buildMenuButton() {
+    return IconButton(
+      onPressed: () => _openEndDrawer(),
+      color: Colors.grey,
+      icon: Icon(Icons.menu),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0.0,
+        actions: [_buildMenuButton()],
+      ),
+      endDrawer: CustomDrawer(),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -109,7 +127,11 @@ class _MandalArtScreenState extends State<MandalArtScreen> {
     );
   }
 
-  _pushDetailView(int index) {
+  void _pushDetailView(int index) {
     Get.to(DetailScreen(index: index), transition: Transition.fade);
+  }
+
+  void _openEndDrawer() {
+    _scaffoldKey.currentState?.openEndDrawer();
   }
 }
