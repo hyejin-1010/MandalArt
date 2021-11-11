@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:madal_art/controllers/data_controller.dart';
+import 'package:madal_art/controllers/setting_controller.dart';
 import 'package:madal_art/models/mandalart.dart';
 
 class Item extends StatelessWidget {
@@ -14,7 +15,24 @@ class Item extends StatelessWidget {
   final bool allView;
   final int group;
   final DataController _dataController = Get.find<DataController>();
+  final SettingController _settingController = Get.find<SettingController>();
   final Function(int)? onClick;
+
+  Widget _buildMandalArtText(bool isTop, String text) {
+    double fontSize = _settingController.fontSize.value;
+
+    return Text(
+      text,
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        color: Colors.black,
+        fontSize: fontSize + (allView ? 3.0 : 0.0),
+        fontWeight: isTop ? FontWeight.bold : FontWeight.normal,
+        overflow: TextOverflow.ellipsis,
+      ),
+      maxLines: allView ? 2 : 3,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,17 +60,7 @@ class Item extends StatelessWidget {
                   color: isTop ? Colors.amber : Colors.white,
                 ),
                 child: Center(
-                  child: Text(
-                    text,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: allView ? 10.0 : 20.0,
-                      fontWeight: isTop ? FontWeight.bold : FontWeight.normal,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    maxLines: allView ? 2 : 3,
-                  ),
+                  child: _buildMandalArtText(isTop, text),
                 ),
               ),
             );

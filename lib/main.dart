@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:madal_art/controllers/data_controller.dart';
+import 'package:madal_art/controllers/setting_controller.dart';
 import 'package:madal_art/screens/mandalart/mandalart.dart';
 
 void main() {
@@ -22,6 +23,7 @@ class _MyAppState extends State<MyApp> {
   void _initControllers() {
     DataController dataController = Get.put(DataController());
     dataController.initialize();
+    Get.put(SettingController());
   }
 
   @override

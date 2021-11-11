@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:madal_art/screens/settings/font_size_setting/font_size_setting.dart';
 
 class SettingsScreen extends StatelessWidget {
   SettingsScreen({ Key? key }) : super(key: key);
@@ -10,11 +12,12 @@ class SettingsScreen extends StatelessWidget {
   ];
 
   Widget _buildMenuItem(int index) {
+    dynamic field = _settingFields[index];
     return InkWell(
-      onTap: () => _clickMenu(index),
+      onTap: () => _clickMenu(field['key']),
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
-        child: Text(_settingFields[index]['text'] ?? ''),
+        child: Text(field['text'] ?? ''),
       ),
     ); 
   }
@@ -39,6 +42,11 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  void _clickMenu(int index) {
+  void _clickMenu(String key) {
+    switch (key) {
+      case 'fontSize':
+        Get.to(() => FontSizeSetting());
+        break;
+    }
   }
 }
