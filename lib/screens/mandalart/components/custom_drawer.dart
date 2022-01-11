@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:madal_art/screens/settings/settings.dart';
+import 'package:madal_art/screens/settings.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({ Key? key }) : super(key: key);

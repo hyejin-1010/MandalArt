@@ -14,6 +14,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final SettingController _settingController = Get.put(SettingController());
+
   @override
   void initState() {
     super.initState();
@@ -22,19 +24,22 @@ class _MyAppState extends State<MyApp> {
 
   void _initControllers() {
     Get.put(DataController());
-    Get.put(SettingController());
   }
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        fontFamily: 'NanumSquare',
-        primarySwatch: Colors.blue,
-      ),
-      debugShowCheckedModeBanner: false,
-      home: MandalArtScreen(),
-    );
+    return Obx(() {
+      String fontFamily = _settingController.fontFamily.value;
+
+      return GetMaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          fontFamily: fontFamily,
+          primarySwatch: Colors.blue,
+        ),
+        debugShowCheckedModeBanner: false,
+        home: MandalArtScreen(),
+      );
+    });
   }
 }
