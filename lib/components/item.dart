@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:madal_art/common/theme.dart';
 import 'package:madal_art/controllers/data_controller.dart';
 import 'package:madal_art/controllers/setting_controller.dart';
 import 'package:madal_art/models/mandalart.dart';
@@ -20,13 +21,14 @@ class Item extends StatelessWidget {
 
   Widget _buildMandalArtText(bool isTop, String text) {
     double fontSize = _settingController.fontSize.value;
+    if (allView) { fontSize = CommonTheme.small; }
 
     return Text(
       text,
       textAlign: TextAlign.center,
       style: TextStyle(
         color: Colors.black,
-        fontSize: fontSize + (allView ? 3.0 : 0.0),
+        fontSize: fontSize,
         fontWeight: isTop ? FontWeight.bold : FontWeight.normal,
         overflow: TextOverflow.ellipsis,
       ),

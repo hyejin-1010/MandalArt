@@ -49,7 +49,7 @@ class FontSizeSettingState extends State<FontSizeSetting> {
     ); 
   }
 
-  Widget _buildSettngButton() {
+  Widget _buildSettingButton() {
     return ElevatedButton(
       onPressed: _clickSettingButton,
       style: ElevatedButton.styleFrom(
@@ -84,14 +84,14 @@ class FontSizeSettingState extends State<FontSizeSetting> {
             ),
           ),
           SizedBox(height: 25.0),
-          _buildSettngButton(),
+          _buildSettingButton(),
         ],
       ),
     );
   }
 
   void _clickSettingButton () {
-    _settingController.fontSize.value = fontSize;
+    _settingController.setFontSize(fontSize);
     Get.back();
   }
 }

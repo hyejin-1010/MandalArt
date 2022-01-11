@@ -21,8 +21,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _initControllers() {
-    DataController dataController = Get.put(DataController());
-    dataController.initialize();
+    Get.put(DataController());
     Get.put(SettingController());
   }
 
