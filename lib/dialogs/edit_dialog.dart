@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:madal_art/controllers/setting_controller.dart';
 
 class EditDialog extends StatefulWidget {
   const EditDialog({
@@ -16,6 +18,7 @@ class EditDialog extends StatefulWidget {
 
 class _EditDialogState extends State<EditDialog> {
   final TextEditingController _editingController = TextEditingController();
+  final SettingController _settingController = Get.find<SettingController>();
 
   @override
   void initState() {
@@ -36,6 +39,7 @@ class _EditDialogState extends State<EditDialog> {
               decoration: InputDecoration(
                 hintText: '목표를 입력하세요.',
               ),
+              style: TextStyle(fontSize: _settingController.fontSize.value),
             ),
             ElevatedButton(
               onPressed: () => widget.done(_editingController.text),
