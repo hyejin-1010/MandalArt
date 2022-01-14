@@ -19,7 +19,7 @@ class Item extends StatelessWidget {
   final SettingController _settingController = Get.find<SettingController>();
   final Function(int)? onClick;
 
-  Widget _buildMandalArtText(bool isTop, String text) {
+  Widget _buildMandalArtText(BuildContext context, bool isTop, String text) {
     double fontSize = _settingController.fontSize.value;
     if (allView) { fontSize = CommonTheme.small; }
 
@@ -27,7 +27,7 @@ class Item extends StatelessWidget {
       text,
       textAlign: TextAlign.center,
       style: TextStyle(
-        color: Colors.black,
+        color: Theme.of(context).colorScheme.secondaryContainer,
         fontSize: fontSize,
         fontWeight: isTop ? FontWeight.bold : FontWeight.normal,
         overflow: TextOverflow.ellipsis,
@@ -59,10 +59,10 @@ class Item extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey, width: 1.0),
-                  color: isTop ? Colors.amber : Colors.white,
+                  color: isTop ? Theme.of(context).colorScheme.primary : Theme.of(context).backgroundColor,
                 ),
                 child: Center(
-                  child: _buildMandalArtText(isTop, text),
+                  child: _buildMandalArtText(context, isTop, text),
                 ),
               ),
             );

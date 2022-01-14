@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:madal_art/controllers/data_controller.dart';
 import 'package:madal_art/controllers/setting_controller.dart';
 import 'package:madal_art/screens/mandalart/mandalart.dart';
+import 'package:madal_art/theme_data.dart';
 
 void main() {
   runApp(MyApp());
@@ -30,13 +31,12 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return Obx(() {
       String fontFamily = _settingController.fontFamily.value;
+      String mainColor = _settingController.mainColor.value;
+      ThemeData? theme = CommonThemeData.getThemeData(mainColor, fontFamily);
 
       return GetMaterialApp(
         title: 'Flutter Demo',
-        theme: ThemeData(
-          fontFamily: fontFamily,
-          primarySwatch: Colors.blue,
-        ),
+        theme: theme,
         debugShowCheckedModeBanner: false,
         home: MandalArtScreen(),
       );

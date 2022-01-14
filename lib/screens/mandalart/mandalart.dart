@@ -52,8 +52,8 @@ class _MandalArtScreenState extends State<MandalArtScreen> {
       onTap: () => _pushDetailView(index),
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.black),
-          color: topView && index == 4 ? Colors.amber : Colors.transparent,
+          border: Border.all(color: Theme.of(context).colorScheme.secondaryContainer),
+          color: topView && index == 4 ? Theme.of(context).colorScheme.primary : Colors.transparent,
         ),
         alignment: Alignment.center,
         child: Hero(

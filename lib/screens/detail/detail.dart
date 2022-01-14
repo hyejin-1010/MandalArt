@@ -84,7 +84,7 @@ class _DetailScreenState extends State<DetailScreen> {
             child: IconButton(
               onPressed: () => Get.back(),
               icon: Icon(Icons.arrow_back_ios),
-              color: Colors.black,
+              color: Theme.of(context).colorScheme.secondaryContainer,
             ),
           ),
           Container(

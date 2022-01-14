@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:madal_art/controllers/setting_controller.dart';
 import 'package:madal_art/screens/settings/font_setting.dart';
 import 'package:madal_art/screens/settings/font_size_setting.dart';
+import 'package:madal_art/screens/settings/main_color_setting.dart';
 
 class SettingsScreen extends StatelessWidget {
   SettingsScreen({ Key? key }) : super(key: key);
@@ -57,6 +58,9 @@ class SettingsScreen extends StatelessWidget {
         break;
       case 'font':
         Get.to(() => FontSettingScreen());
+        break;
+      case 'color':
+        Get.to(() => MainColorSetting());
         break;
     }
   }
