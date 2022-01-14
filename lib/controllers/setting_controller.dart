@@ -1,7 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:madal_art/common/theme.dart';
-import 'package:madal_art/theme_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const String fontSizeKey = 'HJ:MD:fontSize';
@@ -51,7 +49,5 @@ class SettingController extends GetxController {
     if (mainColor.value == newMainColor) { return; }
     mainColor.value = newMainColor;
     _sharedPreferences?.setString(mainColorKey, newMainColor);
-    ThemeData? theme = CommonThemeData.getThemeData(mainColor.value, fontFamily.value);
-    if (theme != null) { Get.changeTheme(theme); }
   }
 }
