@@ -7,9 +7,10 @@ class DataController extends GetxController {
   Database? database;
   RxMap<int, Map<int, MandalArtModel>> data = RxMap<int, Map<int, MandalArtModel>>();
 
-  void initialize() async {
+  @override
+  void onInit() async {
+    super.onInit();
     data = RxMap<int, Map<int, MandalArtModel>>();
-
     try {
       await _openDatabase();
       await _getMandalArtData();

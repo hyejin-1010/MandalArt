@@ -23,8 +23,8 @@ class MandalArtMap extends StatelessWidget {
         itemBuilder: (BuildContext context, int i) {
           return Container(
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.black26),
-              color: index == i ? Colors.amber : Colors.white,
+              border: Border.all(color: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.5)),
+              color: index == i ? Theme.of(context).colorScheme.primary : Theme.of(context).backgroundColor,
             ),
           );
         },

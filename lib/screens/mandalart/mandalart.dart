@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:madal_art/common/fuctions.dart';
 import 'package:madal_art/controllers/data_controller.dart';
+import 'package:madal_art/controllers/setting_controller.dart';
 import 'package:madal_art/screens/detail/detail.dart';
 import 'package:madal_art/components/item.dart';
+import 'package:madal_art/screens/mandalart/components/custom_drawer.dart';
 
 class MandalArtScreen extends StatefulWidget {
   @override
@@ -17,8 +19,11 @@ enum ViewType {
 
 class _MandalArtScreenState extends State<MandalArtScreen> {
   final DataController _dataController = Get.find<DataController>();
+  final SettingController _settingController = Get.find<SettingController>();
   late Size _size;
   ViewType _viewType = ViewType.ALL;
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void didChangeDependencies() {
@@ -29,7 +34,20 @@ class _MandalArtScreenState extends State<MandalArtScreen> {
   Widget _buildTopView(int index) {
     return Material(
       color: Colors.transparent,
-      child: Text(_dataController.data[4]?[index]?.content ?? ''),
+      child: Obx(() {
+        double fontSize = _settingController.fontSize.value;
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: 15.0),
+          child: Text(
+            _dataController.data[4]?[index]?.content ?? '',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: fontSize + 3.0,
+              fontWeight: index == 4 ? FontWeight.bold : FontWeight.w500,
+            ),
+          ),
+        );
+      }),
     );
   }
 
@@ -39,15 +57,15 @@ class _MandalArtScreenState extends State<MandalArtScreen> {
       onTap: () => _pushDetailView(index),
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.black),
-          color: topView && index == 4 ? Colors.amber : Colors.transparent,
+          border: Border.all(color: Theme.of(context).colorScheme.secondaryContainer),
+          color: topView && index == 4 ? Theme.of(context).colorScheme.primary : Colors.transparent,
         ),
         alignment: Alignment.center,
         child: Hero(
           tag: 'mandal-item-$index',
           child: topView
             ? _buildTopView(index)
-            : Item(group: index),
+            : Item(group: index, allView: true),
         ),
       ),
     );
@@ -84,9 +102,24 @@ class _MandalArtScreenState extends State<MandalArtScreen> {
     );
   }
 
+  Widget _buildMenuButton() {
+    return IconButton(
+      onPressed: () => _openEndDrawer(),
+      color: Colors.grey,
+      icon: Icon(Icons.menu),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0.0,
+        actions: [_buildMenuButton()],
+      ),
+      endDrawer: CustomDrawer(),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -99,7 +132,11 @@ class _MandalArtScreenState extends State<MandalArtScreen> {
     );
   }
 
-  _pushDetailView(int index) {
+  void _pushDetailView(int index) {
     Get.to(DetailScreen(index: index), transition: Transition.fade);
+  }
+
+  void _openEndDrawer() {
+    _scaffoldKey.currentState?.openEndDrawer();
   }
 }

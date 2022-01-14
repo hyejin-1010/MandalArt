@@ -16,6 +16,7 @@ dependencies:
   get: ^4.1.4
   sqflite: ^2.0.0+4
   path: ^1.8.0
+  shared_preferences: ^2.0.12
 
 dev_dependencies:
   flutter_test:
@@ -23,3 +24,20 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  fonts:
+    - family: NanumSquare
+      fonts:
+        - asset: assets/fonts/NanumSquareR.ttf
+        - asset: assets/fonts/NanumSquareL.ttf
+          weight: 500
+        - asset: assets/fonts/NanumSquareB.ttf
+          weight: 700
+        - asset: assets/fonts/NanumSquareEB.ttf
+          weight: 900
+    - family: MaruBuri
+      fonts:
+        - asset: assets/fonts/MaruBuri-Regular.ttf
+    - family: NanumGaRamYeonGgoc
+      fonts:
+        - asset: assets/fonts/NanumGaRamYeonGgoc.ttf
