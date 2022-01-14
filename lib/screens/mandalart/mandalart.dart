@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:madal_art/common/fuctions.dart';
 import 'package:madal_art/controllers/data_controller.dart';
+import 'package:madal_art/controllers/setting_controller.dart';
 import 'package:madal_art/screens/detail/detail.dart';
 import 'package:madal_art/components/item.dart';
 import 'package:madal_art/screens/mandalart/components/custom_drawer.dart';
@@ -18,6 +19,7 @@ enum ViewType {
 
 class _MandalArtScreenState extends State<MandalArtScreen> {
   final DataController _dataController = Get.find<DataController>();
+  final SettingController _settingController = Get.find<SettingController>();
   late Size _size;
   ViewType _viewType = ViewType.ALL;
 
@@ -32,17 +34,20 @@ class _MandalArtScreenState extends State<MandalArtScreen> {
   Widget _buildTopView(int index) {
     return Material(
       color: Colors.transparent,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 15.0),
-        child: Text(
-          _dataController.data[4]?[index]?.content ?? '',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 22.0,
-            fontWeight: index == 4 ? FontWeight.bold : FontWeight.w500,
+      child: Obx(() {
+        double fontSize = _settingController.fontSize.value;
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: 15.0),
+          child: Text(
+            _dataController.data[4]?[index]?.content ?? '',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: fontSize + 3.0,
+              fontWeight: index == 4 ? FontWeight.bold : FontWeight.w500,
+            ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 
