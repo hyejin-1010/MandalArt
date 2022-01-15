@@ -50,6 +50,7 @@ class Item extends StatelessWidget {
         itemCount: 9,
         itemBuilder: (BuildContext context, int index) {
           return Obx(() {
+            /*
             MandalArtModel? item = _dataController.data[group]?[index];
             String text = item?.content ?? '';
             bool isTop = item?.top ?? false;
@@ -66,6 +67,8 @@ class Item extends StatelessWidget {
                 ),
               ),
             );
+             */
+            return Container();
           });
         },
       )

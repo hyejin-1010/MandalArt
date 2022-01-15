@@ -52,6 +52,7 @@ class _DetailScreenState extends State<DetailScreen> {
       child: Item(
         group: widget.index,
         onClick: (int index) {
+          /*
           MandalArtModel item = _dataController.data[widget.index]![index]!;
           Get.dialog(EditDialog(
             content: item.content,
@@ -60,6 +61,7 @@ class _DetailScreenState extends State<DetailScreen> {
               Get.back();
             },
           ));
+           */
         },
       ),
     );

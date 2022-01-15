@@ -1,33 +1,23 @@
+import 'package:madal_art/models/item.dart';
+
 class MandalArtModel {
   final int id;
-  final int group;
-  final int index;
-  String content;
-
-  bool get top { return index == 4; }
+  String title;
+  Map<int, Map<int, ItemModel>> items;
+  int? no;
 
   MandalArtModel({
     required this.id,
-    required this.group,
-    required this.index,
-    this.content = '',
+    this.title = '',
+    this.items = const {},
+    this.no,
   });
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'parent': group,
-      'no': index,
-      'content': content,
+      'title': title,
+      'no': id,
     };
-  }
-
-  factory MandalArtModel.fromJson(Map<String, dynamic> json) {
-    return MandalArtModel(
-      id: json['id'],
-      group: json['parent'],
-      index: json['no'],
-      content: json['content'],
-    );
   }
 }

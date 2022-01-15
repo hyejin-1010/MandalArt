@@ -39,7 +39,7 @@ class _MandalArtScreenState extends State<MandalArtScreen> {
         return Container(
           padding: EdgeInsets.symmetric(horizontal: 15.0),
           child: Text(
-            _dataController.data[4]?[index]?.content ?? '',
+            _dataController.mandalart[0]?.items[4]?[index]?.content ?? '',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: fontSize + 3.0,
