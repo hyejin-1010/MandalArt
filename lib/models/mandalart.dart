@@ -9,7 +9,7 @@ class MandalArtModel {
   MandalArtModel({
     required this.id,
     this.title = '',
-    this.items = const {},
+    required this.items,
     this.no,
   });
 

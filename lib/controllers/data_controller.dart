@@ -18,20 +18,18 @@ class DataController extends GetxController {
   }
 
   Future<bool> updateItem(int group, int index, String content) async {
-    /*
-    MandalArtModel? item = data[group]?[index];
-    if (item == null || database == null) { return false; }
+    ItemModel? item = mandalart[0]?.items[group]?[index];
+    if (database == null || item == null) { return false; }
+
     try {
       int result = await database!.rawUpdate(
-        'UPDATE MandalArt SET content = ? WHERE id = ?',
+        'UPDATE Item SET content = ? WHERE id = ?',
         [content, item.id],
       );
-      data[group]![index]!.content = content;
-      data.refresh();
+      mandalart[0]!.items[group]![index]!.content = content;
+      mandalart.refresh();
       return result > 0;
     } catch (_) { return false; }
-     */
-    return false;
   }
 
   Future<void> _openDatabase() async {
@@ -61,7 +59,7 @@ class DataController extends GetxController {
       } else {
         for (int index = 0; index < maps.length; index ++) {
           dynamic item = maps[index];
-          mandalart[item['id']] = MandalArtModel(id: item['id'], title: item['title'], no: item['no']);
+          mandalart[item['id']] = MandalArtModel(id: item['id'], title: item['title'], no: item['no'], items: {});
         }
       }
       final List<Map<String, dynamic>> itemMaps = await database!.rawQuery('SELECT * from Item where mandalArtId = $mandalartId');
@@ -77,16 +75,18 @@ class DataController extends GetxController {
           if (mandalart[mId]!.items[parent] == null) {
             mandalart[mId]!.items[parent] = {};
           }
-          mandalart[mId]!.items[parent]![no] = ItemModel(id: item['id'], mandalArtId: mId, group: parent, index: no, content: item['content']);
+          ItemModel newItem = ItemModel(id: item['id'], mandalArtId: mId, group: parent, index: no, content: item['content']);
+          mandalart[mId]!.items[parent]![no] = newItem;
+          if (parent == 4) { mandalart[mId]!.items[4]![parent] = newItem; }
         }
       }
-    } catch (_) {}
+    } catch (error) { print('[ERROR] : $error'); }
   }
 
   Future<int> createMandalArt(String title) async {
     if (database == null) { return -1; }
     int index = mandalart.keys.length;
-    MandalArtModel newMandalArt = MandalArtModel(id: index, title: title);
+    MandalArtModel newMandalArt = MandalArtModel(id: index, title: title, items: {});
     try {
       await database!.insert(
         'MandalArt',
