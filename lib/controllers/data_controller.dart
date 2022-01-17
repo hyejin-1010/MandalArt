@@ -114,8 +114,7 @@ class DataController extends GetxController {
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
       newMandalArt.id = id;
-      mandalart[newMandalArt.id] = newMandalArt;
-      await createTables(newMandalArt.id);
+      mandalart[id] = newMandalArt;
     } catch (_) {}
     return newMandalArt.id;
   }
@@ -130,12 +129,14 @@ class DataController extends GetxController {
         } catch (error) { throw error; }
         continue;
       }
+
       for (int index = 0; index < 9; index ++) {
         try {
           await _insert(mandalartId, group, index);
         } catch (error) { throw error; }
       }
     }
+    mandalart.refresh();
   }
 
 
@@ -150,12 +151,12 @@ class DataController extends GetxController {
       item.id = id;
     } catch (_) {}
 
-    if (mandalart[group] == null) { return item; }
-    if (mandalart[group]!.items[group] == null) { mandalart[group]!.items[group] = {}; }
-    mandalart[group]!.items[group]![index] = item;
+    if (mandalart[mandalArtId] == null) { return item; }
+    if (mandalart[mandalArtId]!.items[group] == null) { mandalart[mandalArtId]!.items[group] = {}; }
+    mandalart[mandalArtId]!.items[group]![index] = item;
     if (index == 4) {
-      if (mandalart[group]!.items[4] == null) { mandalart[group]!.items[4] = {}; }
-      mandalart[group]!.items[4]![group] = item;
+      if (mandalart[mandalArtId]!.items[4] == null) { mandalart[mandalArtId]!.items[4] = {}; }
+      mandalart[mandalArtId]!.items[4]![group] = item;
     }
     return item;
   }
