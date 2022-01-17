@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:madal_art/controllers/data_controller.dart';
+import 'package:madal_art/controllers/setting_controller.dart';
+import 'package:madal_art/dialogs/edit_dialog.dart';
+import 'package:madal_art/models/mandalart.dart';
 import 'package:madal_art/screens/settings.dart';
 
 class CustomDrawer extends StatelessWidget {
-  const CustomDrawer({ Key? key }) : super(key: key);
+  CustomDrawer({ Key? key }) : super(key: key);
+
+  final DataController _dataController = Get.find<DataController>();
+  final SettingController _settingController = Get.find<SettingController>();
 
   Widget _buildSettingButton() {
     return InkWell(
@@ -27,6 +34,38 @@ class CustomDrawer extends StatelessWidget {
     );
   }
 
+  Widget _buildCategoryListView() {
+    return Obx(() {
+      Map<int, MandalArtModel> mandalart = _dataController.mandalart;
+      List<int> keys = mandalart.keys.toList();
+      int? selectedMandalartId = _dataController.mandalartId.value;
+      double fontSize = _settingController.fontSize.value;
+
+      return ListView.separated(
+        separatorBuilder: (_, __) => Divider(),
+        itemCount: keys.length,
+        itemBuilder: (BuildContext context, int index) {
+          int id = keys[index];
+          bool selected = id == selectedMandalartId;
+          return InkWell(
+            onTap: () => _clickMandalartTitle(id),
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
+              child: Text(
+                mandalart[id]!.title,
+                style: TextStyle(
+                  fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
+                  color: selected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondaryContainer,
+                  fontSize: fontSize,
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -35,6 +74,12 @@ class CustomDrawer extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           mainAxisSize: MainAxisSize.max,
           children: [
+            SizedBox(height: 50.0),
+            Expanded(child: _buildCategoryListView()),
+            TextButton(
+              onPressed: _clickAddMandalartButton,
+              child: Text('+ 만다라트 추가하기'),
+            ),
             _buildSettingButton(),
           ],
         ),
@@ -42,7 +87,28 @@ class CustomDrawer extends StatelessWidget {
     );
   }
 
+  void _clickMandalartTitle(int id) {
+    _dataController.changeMandalartId(id);
+  }
+
   void _goToSettingScreen() {
     Get.to(SettingsScreen());
+  }
+
+  void _clickAddMandalartButton() {
+    Get.dialog(EditDialog(
+      isItem: false,
+      content: '',
+      done: (String title) {
+        _addMandalart(title);
+        Get.back();
+      },
+    ));
+  }
+
+  void _addMandalart(String title) async {
+    try {
+      await _dataController.createMandalArt(title);
+    } catch (_) {}
   }
 }

@@ -1,5 +1,5 @@
 class ItemModel {
-  final int id;
+  int id;
   final int mandalArtId;
   final int group;
   final int index;
@@ -17,7 +17,6 @@ class ItemModel {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'mandalArtId': mandalArtId,
       'parent': group,
       'no': index,

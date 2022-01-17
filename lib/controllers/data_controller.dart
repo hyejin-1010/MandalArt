@@ -18,6 +18,14 @@ class DataController extends GetxController {
     } catch (err) { throw err; }
   }
 
+  void changeMandalartId(int newId) {
+    if (mandalartId.value == newId) { return; }
+    mandalartId.value = newId;
+    if (mandalart[mandalartId.value]?.items.toString() == '{}') {
+      initMandalartItems(mandalartId.value!);
+    }
+  }
+
   Future<bool> updateItem(int group, int index, String content) async {
     ItemModel? item = mandalart[mandalartId.value]?.items[group]?[index];
     if (database == null || item == null) { return false; }
@@ -64,12 +72,16 @@ class DataController extends GetxController {
           if (index == 0) { newMandalartId = item['id']; }
         }
       }
-
       mandalartId.value = newMandalartId;
+      await initMandalartItems(newMandalartId);
+    } catch (error) { print('[ERROR] : $error'); }
+  }
 
+  Future<void> initMandalartItems(int id) async {
+    try {
       final List<Map<String, dynamic>> itemMaps = await database!.rawQuery('SELECT * from Item where mandalArtId = $mandalartId');
       if (itemMaps.length == 0) {
-        await createTables(newMandalartId);
+        await createTables(id);
       } else {
         for (int index = 0; index < itemMaps.length; index ++) {
           dynamic item = itemMaps[index];
@@ -88,7 +100,7 @@ class DataController extends GetxController {
           }
         }
       }
-    } catch (error) { print('[ERROR] : $error'); }
+    } catch (_) { rethrow; }
   }
 
   Future<int> createMandalArt(String title) async {
@@ -96,13 +108,15 @@ class DataController extends GetxController {
     int index = mandalart.keys.length;
     MandalArtModel newMandalArt = MandalArtModel(id: index, title: title, items: {});
     try {
-      await database!.insert(
+      int id = await database!.insert(
         'MandalArt',
         newMandalArt.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
+      newMandalArt.id = id;
+      mandalart[newMandalArt.id] = newMandalArt;
+      await createTables(newMandalArt.id);
     } catch (_) {}
-    mandalart[newMandalArt.id] = newMandalArt;
     return newMandalArt.id;
   }
 
@@ -126,15 +140,14 @@ class DataController extends GetxController {
 
 
   Future<ItemModel> _insert(int mandalArtId, int group, int index) async {
-    int id = (group * 10) + index + 1;
-    ItemModel item = ItemModel(id: id, mandalArtId: mandalArtId, group: group, index: index);
-
+    ItemModel item = ItemModel(id: 0, mandalArtId: mandalArtId, group: group, index: index);
     try {
-      await database!.insert(
+      int id = await database!.insert(
         'Item',
         item.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
+      item.id = id;
     } catch (_) {}
 
     if (mandalart[group] == null) { return item; }

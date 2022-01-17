@@ -1,7 +1,7 @@
 import 'package:madal_art/models/item.dart';
 
 class MandalArtModel {
-  final int id;
+  int id;
   String title;
   Map<int, Map<int, ItemModel>> items;
   int? no;
@@ -15,7 +15,6 @@ class MandalArtModel {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'title': title,
       'no': id,
     };
