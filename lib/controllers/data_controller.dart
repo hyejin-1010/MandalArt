@@ -7,6 +7,7 @@ import 'package:sqflite/sqflite.dart';
 class DataController extends GetxController {
   Database? database;
   RxMap<int, MandalArtModel> mandalart = <int, MandalArtModel>{}.obs;
+  Rx<int?> mandalartId = Rx<int?>(null);
 
   @override
   void onInit() async {
@@ -18,7 +19,7 @@ class DataController extends GetxController {
   }
 
   Future<bool> updateItem(int group, int index, String content) async {
-    ItemModel? item = mandalart[0]?.items[group]?[index];
+    ItemModel? item = mandalart[mandalartId.value]?.items[group]?[index];
     if (database == null || item == null) { return false; }
 
     try {
@@ -26,7 +27,7 @@ class DataController extends GetxController {
         'UPDATE Item SET content = ? WHERE id = ?',
         [content, item.id],
       );
-      mandalart[0]!.items[group]![index]!.content = content;
+      mandalart[mandalartId.value]!.items[group]![index]!.content = content;
       mandalart.refresh();
       return result > 0;
     } catch (_) { return false; }
@@ -50,21 +51,25 @@ class DataController extends GetxController {
 
   Future<void> _getMandalArtData() async {
     if (database == null) { return; }
-    int mandalartId = 0;
+    int newMandalartId = -1;
     try {
       final List<Map<String, dynamic>> maps = await database!.query('MandalArt');
       if (maps.length == 0) {
-        mandalartId = await createMandalArt('첫 번째 만다라트');
-        if (mandalartId == -1) { return; }
+        newMandalartId = await createMandalArt('첫 번째 만다라트');
+        if (newMandalartId == -1) { return; }
       } else {
         for (int index = 0; index < maps.length; index ++) {
           dynamic item = maps[index];
           mandalart[item['id']] = MandalArtModel(id: item['id'], title: item['title'], no: item['no'], items: {});
+          if (index == 0) { newMandalartId = item['id']; }
         }
       }
+
+      mandalartId.value = newMandalartId;
+
       final List<Map<String, dynamic>> itemMaps = await database!.rawQuery('SELECT * from Item where mandalArtId = $mandalartId');
       if (itemMaps.length == 0) {
-        await createTables(mandalartId);
+        await createTables(newMandalartId);
       } else {
         for (int index = 0; index < itemMaps.length; index ++) {
           dynamic item = itemMaps[index];
@@ -77,7 +82,10 @@ class DataController extends GetxController {
           }
           ItemModel newItem = ItemModel(id: item['id'], mandalArtId: mId, group: parent, index: no, content: item['content']);
           mandalart[mId]!.items[parent]![no] = newItem;
-          if (parent == 4) { mandalart[mId]!.items[4]![parent] = newItem; }
+          if (no == 4) {
+            if (mandalart[mId]!.items[4] == null) { mandalart[mId]!.items[4] = {}; }
+            mandalart[mId]!.items[4]![parent] = newItem;
+          }
         }
       }
     } catch (error) { print('[ERROR] : $error'); }

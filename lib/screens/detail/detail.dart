@@ -52,8 +52,7 @@ class _DetailScreenState extends State<DetailScreen> {
       child: Item(
         group: widget.index,
         onClick: (int index) {
-          ItemModel? item = _dataController.mandalart[0]?.items[widget.index]?[index];
-          print('chloe test item : $item');
+          ItemModel? item = _dataController.mandalart[_dataController.mandalartId.value]?.items[widget.index]?[index];
           if (item == null) { return; }
 
           Get.dialog(EditDialog(

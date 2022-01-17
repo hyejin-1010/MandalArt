@@ -50,7 +50,7 @@ class Item extends StatelessWidget {
         itemCount: 9,
         itemBuilder: (BuildContext context, int index) {
           return Obx(() {
-            ItemModel? item = _dataController.mandalart[0]?.items[group]?[index];
+            ItemModel? item = _dataController.mandalart[_dataController.mandalartId.value]?.items[group]?[index];
             String text = item?.content ?? '';
             bool isTop = item?.top ?? false;
 
