@@ -4,6 +4,7 @@ import 'package:madal_art/controllers/data_controller.dart';
 import 'package:madal_art/controllers/setting_controller.dart';
 import 'package:madal_art/dialogs/edit_dialog.dart';
 import 'package:madal_art/models/mandalart.dart';
+import 'package:madal_art/screens/category_list_screen.dart';
 import 'package:madal_art/screens/settings.dart';
 
 class CustomDrawer extends StatelessWidget {
@@ -75,6 +76,13 @@ class CustomDrawer extends StatelessWidget {
           mainAxisSize: MainAxisSize.max,
           children: [
             SizedBox(height: 50.0),
+            Container(
+              alignment: Alignment.topRight,
+              child: TextButton(
+                onPressed: () => Get.to(CategoryListScreen()),
+                child: Text('설정'),
+              ),
+            ),
             Expanded(child: _buildCategoryListView()),
             TextButton(
               onPressed: _clickAddMandalartButton,
