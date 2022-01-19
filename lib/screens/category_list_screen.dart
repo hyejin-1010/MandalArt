@@ -9,7 +9,7 @@ class CategoryListScreen extends StatelessWidget {
 
   final DataController _dataController = Get.find<DataController>();
 
-  Widget _buildItem(MandalArtModel mandalart) {
+  Widget _buildItem(BuildContext context, MandalArtModel mandalart) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15.0),
       child: Row(
@@ -17,11 +17,17 @@ class CategoryListScreen extends StatelessWidget {
           Expanded(child: Text(mandalart.title)),
           IconButton(
             onPressed: () => _clickEditButton(mandalart),
-            icon: Icon(Icons.edit),
+            icon: Icon(
+              Icons.edit,
+              color: Theme.of(context).primaryColor,
+            ),
           ),
           IconButton(
             onPressed: () => _clickDeleteButton(mandalart.id),
-            icon: Icon(Icons.delete),
+            icon: Icon(
+              Icons.delete,
+              color: Colors.red,
+            ),
           ),
         ],
       ),
@@ -35,15 +41,15 @@ class CategoryListScreen extends StatelessWidget {
       body: Container(
         padding: const EdgeInsets.symmetric(vertical: 25.0),
         child: Obx(() {
-          Map<int, MandalArtModel> mandalartMap = _dataController.mandalart;
-          final List<int> keys = mandalartMap.keys.toList();
+          Map<int, MandalArtModel> mandalart = _dataController.mandalart;
+          final List<int> keys = mandalart.keys.toList();
 
           return ListView.separated(
             separatorBuilder: (_, __) => const Divider(),
             itemCount: keys.length,
             itemBuilder: (BuildContext context, int index) {
-              MandalArtModel mandalart = mandalartMap[keys[index]]!;
-              return _buildItem(mandalart);
+              MandalArtModel item = mandalart[keys[index]]!;
+              return _buildItem(context, item);
             },
           );
         }),
@@ -63,5 +69,25 @@ class CategoryListScreen extends StatelessWidget {
   }
 
   void _clickDeleteButton(int id) {
+    Get.defaultDialog(
+      title: '삭제',
+      content: Container(
+        padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+        child: Text('정말 삭제하시겠습니까?'),
+      ),
+      cancel: TextButton(
+        onPressed: () => Get.back(),
+        child: Text('취소', style: TextStyle(color: Colors.grey)),
+      ),
+      confirm: TextButton(
+        onPressed: () => _doDelete(id),
+        child: Text('삭제', style: TextStyle(color: Colors.red)),
+      ),
+    );
+  }
+
+  void _doDelete(int id) {
+    Get.back();
+    _dataController.deleteMandalart(id);
   }
 }

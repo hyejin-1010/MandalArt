@@ -41,6 +41,15 @@ class DataController extends GetxController {
     } catch (_) { return false; }
   }
 
+  Future<bool> deleteMandalart(int id) async {
+    if (database == null) { return false; }
+    try {
+      int result = await database!.rawDelete('DELETE From MandalArt WHERE id = ?', [id]);
+      mandalart.remove(id);
+      return result > 0;
+    } catch (_) { return false; }
+  }
+
   Future<bool> updateItem(int group, int index, String content) async {
     ItemModel? item = mandalart[mandalartId.value]?.items[group]?[index];
     if (database == null || item == null) { return false; }
