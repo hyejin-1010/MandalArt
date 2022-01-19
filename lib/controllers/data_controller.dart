@@ -26,6 +26,21 @@ class DataController extends GetxController {
     }
   }
 
+  Future<bool> updateMandalartTitle(int id, String title) async {
+    if (database == null) { return false; }
+    try {
+      int result = await database!.rawUpdate(
+        'UPDATE MandalArt SET title = ? WHERE id = ?',
+        [title, id],
+      );
+      if (mandalart[id] != null) {
+        mandalart[id]!.title = title;
+        mandalart.refresh();
+      }
+      return result > 0;
+    } catch (_) { return false; }
+  }
+
   Future<bool> updateItem(int group, int index, String content) async {
     ItemModel? item = mandalart[mandalartId.value]?.items[group]?[index];
     if (database == null || item == null) { return false; }
