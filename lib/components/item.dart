@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:madal_art/common/theme.dart';
 import 'package:madal_art/controllers/data_controller.dart';
 import 'package:madal_art/controllers/setting_controller.dart';
-import 'package:madal_art/models/mandalart.dart';
+import 'package:madal_art/models/item.dart';
 
 class Item extends StatelessWidget {
   Item({
@@ -50,7 +50,7 @@ class Item extends StatelessWidget {
         itemCount: 9,
         itemBuilder: (BuildContext context, int index) {
           return Obx(() {
-            MandalArtModel? item = _dataController.data[group]?[index];
+            ItemModel? item = _dataController.mandalart[_dataController.mandalartId.value]?.items[group]?[index];
             String text = item?.content ?? '';
             bool isTop = item?.top ?? false;
 

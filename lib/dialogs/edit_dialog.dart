@@ -7,10 +7,12 @@ class EditDialog extends StatefulWidget {
     Key? key,
     required this.content,
     required this.done,
+    this.isItem = true,
   }) : super(key: key);
 
   final String content;
   final Function(String) done;
+  final bool isItem;
 
   @override
   _EditDialogState createState() => _EditDialogState();
@@ -37,7 +39,7 @@ class _EditDialogState extends State<EditDialog> {
             TextField(
               controller: _editingController,
               decoration: InputDecoration(
-                hintText: '목표를 입력하세요.',
+                hintText: widget.isItem ? '목표를 입력하세요.' : '만다라트 타이틀을 입력해주세요.',
               ),
               style: TextStyle(fontSize: _settingController.fontSize.value),
             ),
