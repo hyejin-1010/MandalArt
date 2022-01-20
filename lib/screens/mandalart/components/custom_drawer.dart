@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:madal_art/common/theme.dart';
 import 'package:madal_art/controllers/data_controller.dart';
 import 'package:madal_art/controllers/setting_controller.dart';
 import 'package:madal_art/dialogs/edit_dialog.dart';
@@ -80,13 +81,26 @@ class CustomDrawer extends StatelessWidget {
               alignment: Alignment.topRight,
               child: TextButton(
                 onPressed: () => Get.to(CategoryListScreen()),
-                child: Text('설정'),
+                child: Text(
+                  '설정',
+                  style: TextStyle(fontSize: CommonTheme.small),
+                ),
               ),
             ),
             Expanded(child: _buildCategoryListView()),
-            TextButton(
-              onPressed: _clickAddMandalartButton,
-              child: Text('+ 만다라트 추가하기'),
+            InkWell(
+              onTap: _clickAddMandalartButton,
+              child: Container(
+                alignment: Alignment.center,
+                padding: const EdgeInsets.symmetric(vertical: 7.0),
+                child: Text(
+                  '+ 만다라트 추가하기',
+                  style: TextStyle(
+                    fontSize: CommonTheme.large,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+              ),
             ),
             _buildSettingButton(),
           ],

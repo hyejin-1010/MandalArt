@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:madal_art/controllers/data_controller.dart';
+import 'package:madal_art/controllers/setting_controller.dart';
 import 'package:madal_art/dialogs/edit_dialog.dart';
 import 'package:madal_art/models/mandalart.dart';
 
@@ -8,18 +9,25 @@ class CategoryListScreen extends StatelessWidget {
   CategoryListScreen({Key? key}) : super(key: key);
 
   final DataController _dataController = Get.find<DataController>();
+  final SettingController _settingController = Get.find<SettingController>();
 
   Widget _buildItem(BuildContext context, MandalArtModel mandalart) {
+    double fontSize = _settingController.fontSize.value;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15.0),
       child: Row(
         children: [
-          Expanded(child: Text(mandalart.title)),
+          Expanded(child: Text(
+            mandalart.title,
+            style: TextStyle(fontSize: fontSize),
+          )),
           IconButton(
             onPressed: () => _clickEditButton(mandalart),
             icon: Icon(
               Icons.edit,
               color: Theme.of(context).primaryColor,
+              size: fontSize,
             ),
           ),
           IconButton(
@@ -27,6 +35,7 @@ class CategoryListScreen extends StatelessWidget {
             icon: Icon(
               Icons.delete,
               color: Colors.red,
+              size: fontSize,
             ),
           ),
         ],
