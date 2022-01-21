@@ -21,7 +21,7 @@ class _MandalArtScreenState extends State<MandalArtScreen> {
   final DataController _dataController = Get.find<DataController>();
   final SettingController _settingController = Get.find<SettingController>();
   late Size _size;
-  ViewType _viewType = ViewType.ALL;
+  ViewType _viewType = ViewType.TOP;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -92,13 +92,25 @@ class _MandalArtScreenState extends State<MandalArtScreen> {
   }
 
   Widget _buildViewTypeSwitchButton() {
-    return Switch(
-      value: _viewType == ViewType.TOP,
-      onChanged: (bool? value) {
-        ViewType newValue = value == true ? ViewType.TOP : ViewType.ALL;
-        if (value == null || _viewType == newValue) { return; }
-        setState(() { _viewType = newValue; });
-      },
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: <Widget>[
+        Text(
+          'All View',
+          style: TextStyle(
+            color: Theme.of(context).primaryColor,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Switch(
+          value: _viewType == ViewType.ALL,
+          onChanged: (bool? value) {
+            ViewType newValue = value == true ? ViewType.ALL : ViewType.TOP;
+            if (value == null || _viewType == newValue) { return; }
+            setState(() { _viewType = newValue; });
+          },
+        ),
+      ],
     );
   }
 
