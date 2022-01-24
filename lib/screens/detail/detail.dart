@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:madal_art/common/fuctions.dart';
+import 'package:madal_art/common/functions.dart';
 import 'package:madal_art/controllers/data_controller.dart';
 import 'package:madal_art/components/item.dart';
 import 'package:madal_art/dialogs/edit_dialog.dart';
@@ -8,9 +8,7 @@ import 'package:madal_art/models/item.dart';
 import 'package:madal_art/screens/detail/components/map.dart';
 
 class DetailScreen extends StatefulWidget {
-  DetailScreen({
-    required this.index,
-  });
+  const DetailScreen({ required this.index });
   final int index;
 
   @override
@@ -47,23 +45,40 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   Widget _buildMandalArtView() {
-    return Hero(
-      tag: 'mandal-item-${widget.index}',
-      child: Item(
-        group: widget.index,
-        onClick: (int index) {
-          ItemModel? item = _dataController.mandalart[_dataController.mandalartId.value]?.items[widget.index]?[index];
-          if (item == null) { return; }
+    return Item(
+      group: widget.index,
+      onClick: (int index) {
+        ItemModel? item = _dataController.mandalart[_dataController.mandalartId.value]?.items[widget.index]?[index];
+        if (item == null) { return; }
 
-          Get.dialog(EditDialog(
-            content: item.content,
-            done: (String content) {
-              _dataController.updateItem(widget.index, index, content);
-              Get.back();
-            },
-          ));
-        },
-      ),
+        Get.dialog(EditDialog(
+          content: item.content,
+          done: (String content) {
+            _dataController.updateItem(widget.index, index, content);
+            Get.back();
+          },
+        ));
+      },
+    );
+  }
+
+  Widget _buildArrowIconButton(String arrow) {
+    IconData iconData = Icons.arrow_forward;
+    switch (arrow) {
+      case 'top':
+        iconData = Icons.arrow_upward;
+        break;
+      case 'left':
+        iconData = Icons.arrow_back;
+        break;
+      case 'bottom':
+        iconData = Icons.arrow_downward;
+        break;
+    }
+
+    return IconButton(
+      onPressed: () => _clickArrow(arrow),
+      icon: Icon(iconData),
     );
   }
 
@@ -108,7 +123,11 @@ class _DetailScreenState extends State<DetailScreen> {
                         SizedBox(
                           width: mandalSize,
                           height: mandalSize,
-                          child: _buildMandalArtView(),
+                          child: Get.arguments['allView'] == true
+                            ? Hero(
+                              tag: 'mandal-item-${widget.index}',
+                              child: _buildMandalArtView(),
+                            ) : _buildMandalArtView(),
                         ),
                         widget.index % 3 != 2
                             ? _buildArrowIconButton('right')
@@ -124,26 +143,6 @@ class _DetailScreenState extends State<DetailScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildArrowIconButton(String arrow) {
-    IconData iconData = Icons.arrow_forward;
-    switch (arrow) {
-      case 'top':
-        iconData = Icons.arrow_upward;
-        break;
-      case 'left':
-        iconData = Icons.arrow_back;
-        break;
-      case 'bottom':
-        iconData = Icons.arrow_downward;
-        break;
-    }
-
-    return IconButton(
-      onPressed: () => _clickArrow(arrow),
-      icon: Icon(iconData),
     );
   }
 

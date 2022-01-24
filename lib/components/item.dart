@@ -36,6 +36,20 @@ class Item extends StatelessWidget {
     );
   }
 
+  Widget _buildItem(BuildContext context, bool isTop, String text) {
+    return Material(
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey, width: 1.0),
+          color: isTop ? Theme.of(context).colorScheme.primary : Theme.of(context).backgroundColor,
+        ),
+        child: Center(
+          child: _buildMandalArtText(context, isTop, text),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -53,18 +67,13 @@ class Item extends StatelessWidget {
             ItemModel? item = _dataController.mandalart[_dataController.mandalartId.value]?.items[group]?[index];
             String text = item?.content ?? '';
             bool isTop = item?.top ?? false;
-
+            bool? beforeAllView = Get.arguments?['allView'];
             return GestureDetector(
               onTap: onClick != null ? () => onClick!(index) : null,
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey, width: 1.0),
-                  color: isTop ? Theme.of(context).colorScheme.primary : Theme.of(context).backgroundColor,
-                ),
-                child: Center(
-                  child: _buildMandalArtText(context, isTop, text),
-                ),
-              ),
+              child: (index == 4 && beforeAllView == false) ? Hero(
+                tag: 'mandal-item-$group-$index',
+                child: _buildItem(context, isTop, text),
+              ) : _buildItem(context, isTop, text),
             );
           });
         },

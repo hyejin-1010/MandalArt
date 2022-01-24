@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:madal_art/common/fuctions.dart';
+import 'package:madal_art/common/functions.dart';
 import 'package:madal_art/controllers/data_controller.dart';
 import 'package:madal_art/controllers/setting_controller.dart';
 import 'package:madal_art/screens/detail/detail.dart';
@@ -12,10 +12,7 @@ class MandalArtScreen extends StatefulWidget {
   _MandalArtScreenState createState() => _MandalArtScreenState();
 }
 
-enum ViewType {
-  ALL,
-  TOP,
-}
+enum ViewType { ALL, TOP }
 
 class _MandalArtScreenState extends State<MandalArtScreen> {
   final DataController _dataController = Get.find<DataController>();
@@ -53,16 +50,17 @@ class _MandalArtScreenState extends State<MandalArtScreen> {
 
   Widget _buildMandalArtItem(int index) {
     bool topView = _viewType == ViewType.TOP;
+
     return InkWell(
       onTap: () => _pushDetailView(index),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Theme.of(context).colorScheme.secondaryContainer),
-          color: topView && index == 4 ? Theme.of(context).colorScheme.primary : Colors.transparent,
-        ),
-        alignment: Alignment.center,
-        child: Hero(
-          tag: 'mandal-item-$index',
+      child: Hero(
+        tag: 'mandal-item-$index${topView ? '-4' : ''}',
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Theme.of(context).colorScheme.secondaryContainer, width: 0.5),
+            color: topView && index == 4 ? Theme.of(context).colorScheme.primary : Colors.transparent,
+          ),
+          alignment: Alignment.center,
           child: topView
             ? _buildTopView(index)
             : Item(group: index, allView: true),
@@ -104,21 +102,21 @@ class _MandalArtScreenState extends State<MandalArtScreen> {
         ),
         Switch(
           value: _viewType == ViewType.ALL,
-          onChanged: (bool? value) {
-            ViewType newValue = value == true ? ViewType.ALL : ViewType.TOP;
-            if (value == null || _viewType == newValue) { return; }
-            setState(() { _viewType = newValue; });
-          },
+          onChanged: _onChangeViewType,
         ),
       ],
     );
   }
 
-  Widget _buildMenuButton() {
-    return IconButton(
-      onPressed: () => _openEndDrawer(),
-      color: Colors.grey,
-      icon: Icon(Icons.menu),
+  AppBar _buildAppBar() {
+    return AppBar(
+      backgroundColor: Colors.transparent,
+      elevation: 0.0,
+      actions: [IconButton(
+        onPressed: _openEndDrawer,
+        color: Colors.grey,
+        icon: Icon(Icons.menu),
+      )],
     );
   }
 
@@ -126,11 +124,7 @@ class _MandalArtScreenState extends State<MandalArtScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-        actions: [_buildMenuButton()],
-      ),
+      appBar: _buildAppBar(),
       endDrawer: CustomDrawer(),
       body: SafeArea(
         child: Column(
@@ -138,8 +132,7 @@ class _MandalArtScreenState extends State<MandalArtScreen> {
           children: <Widget>[
             _buildViewTypeSwitchButton(),
             Obx(() {
-              int? mandalartId = _dataController.mandalartId.value;
-              if (mandalartId == null) { return Container(); }
+              if (_dataController.currentMandalart == null) { return Container(); }
               return Center(child: _buildMandalArtAllView());
             }),
           ],
@@ -149,10 +142,18 @@ class _MandalArtScreenState extends State<MandalArtScreen> {
   }
 
   void _pushDetailView(int index) {
-    Get.to(DetailScreen(index: index), transition: Transition.fade);
+    Get.to(DetailScreen(index: index), transition: Transition.fade, arguments: {
+      'allView': _viewType == ViewType.ALL,
+    });
   }
 
   void _openEndDrawer() {
     _scaffoldKey.currentState?.openEndDrawer();
+  }
+
+  void _onChangeViewType(bool? value) {
+    ViewType newValue = value == true ? ViewType.ALL : ViewType.TOP;
+    if (value == null || _viewType == newValue) { return; }
+    setState(() { _viewType = newValue; });
   }
 }

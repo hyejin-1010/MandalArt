@@ -9,6 +9,11 @@ class DataController extends GetxController {
   RxMap<int, MandalArtModel> mandalart = <int, MandalArtModel>{}.obs;
   Rx<int?> mandalartId = Rx<int?>(null);
 
+  MandalArtModel? get currentMandalart {
+    if (mandalartId.value == null) { return null; }
+    return mandalart[mandalartId.value];
+  }
+
   @override
   void onInit() async {
     super.onInit();
