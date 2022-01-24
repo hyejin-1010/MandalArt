@@ -142,7 +142,7 @@ class _MandalArtScreenState extends State<MandalArtScreen> {
   }
 
   void _pushDetailView(int index) {
-    Get.to(DetailScreen(index: index), transition: Transition.fade, arguments: {
+    Get.to(() => DetailScreen(index: index), transition: Transition.fade, arguments: {
       'allView': _viewType == ViewType.ALL,
     });
   }
