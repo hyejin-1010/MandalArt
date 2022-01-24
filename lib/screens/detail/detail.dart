@@ -123,7 +123,7 @@ class _DetailScreenState extends State<DetailScreen> {
                         SizedBox(
                           width: mandalSize,
                           height: mandalSize,
-                          child: Get.arguments['allView'] == true
+                          child: Get.arguments?['allView'] == true
                             ? Hero(
                               tag: 'mandal-item-${widget.index}',
                               child: _buildMandalArtView(),
@@ -149,10 +149,12 @@ class _DetailScreenState extends State<DetailScreen> {
   void _clickArrow (String arrow) {
     dynamic arrowData = ARROW_DATA[arrow] ?? {};
     int arrowNum = arrowData['index'] ?? 0;
+
     Get.off(
       () => DetailScreen(index: widget.index + arrowNum),
       preventDuplicates: false,
       transition: arrowData['transition'],
+      arguments: Get.arguments,
     );
   }
 }
