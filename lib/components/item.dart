@@ -21,7 +21,7 @@ class Item extends StatelessWidget {
 
   Widget _buildMandalArtText(BuildContext context, int index, String text) {
     double fontSize = _settingController.fontSize.value;
-    if (allView) { fontSize = CommonTheme.small; }
+    if (allView) { fontSize = CommonTheme.xxSmall; }
 
     return Text(
       text,

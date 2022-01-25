@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:madal_art/common/functions.dart';
+import 'package:madal_art/components/edit_sheet.dart';
 import 'package:madal_art/controllers/data_controller.dart';
 import 'package:madal_art/components/item.dart';
 import 'package:madal_art/dialogs/edit_dialog.dart';
@@ -51,11 +52,10 @@ class _DetailScreenState extends State<DetailScreen> {
         ItemModel? item = _dataController.mandalart[_dataController.mandalartId.value]?.items[widget.index]?[index];
         if (item == null) { return; }
 
-        Get.dialog(EditDialog(
+        Get.bottomSheet(EditSheet(
           content: item.content,
-          done: (String content) {
+          onSave: (String content) {
             _dataController.updateItem(widget.index, index, content);
-            Get.back();
           },
         ));
       },
