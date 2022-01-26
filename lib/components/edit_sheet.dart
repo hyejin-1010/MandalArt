@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:madal_art/common/theme.dart';
 
 class EditSheet extends StatefulWidget {
   EditSheet({
@@ -44,18 +45,34 @@ class _EditSheetState extends State<EditSheet> with TickerProviderStateMixin {
       children: <Widget>[
         TextButton(
           onPressed: _back,
-          child: Text('취소'),
+          child: Text(
+            '취소',
+            style: TextStyle(fontSize: CommonTheme.small),
+          ),
         ),
         Expanded(child: Text(
           '목표 편집',
           textAlign: TextAlign.center,
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: CommonTheme.large,
+          ),
         )),
         TextButton(
           onPressed: _save,
           child: Text('저장'),
         ),
       ],
+    );
+  }
+
+  Widget _buildTextField() {
+    return TextField(
+      controller: _textEditingController,
+      decoration: InputDecoration(
+        hintText: '목표를 입력하세요.',
+      ),
+      style: TextStyle(fontSize: CommonTheme.medium),
     );
   }
 
@@ -73,12 +90,7 @@ class _EditSheetState extends State<EditSheet> with TickerProviderStateMixin {
               children: <Widget>[
                 _buildHeader(),
                 const SizedBox(height: 20.0),
-                TextField(
-                  controller: _textEditingController,
-                  decoration: InputDecoration(
-                    hintText: '목표를 입력하세요.',
-                  ),
-                )
+                _buildTextField(),
               ],
             ),
           ),
