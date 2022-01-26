@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:madal_art/models/item.dart';
 import 'package:madal_art/models/mandalart.dart';
+import 'package:madal_art/models/todo.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -82,8 +83,11 @@ class DataController extends GetxController {
           await db.execute(
             'CREATE TABLE MandalArt (id INTEGER PRIMARY KEY, title TEXT, no INTEGER)',
           );
+          await db.execute(
+            'CREATE TABLE Todo (id INTEGER PRIMARY KEY, content TEXT, isDone BOOLEAN, parent INTEGER, mandalArtId INTEGER)',
+          );
         });
-    } catch (_) {}
+    } catch (_) { }
   }
 
   Future<void> _getMandalArtData() async {
@@ -109,24 +113,31 @@ class DataController extends GetxController {
   Future<void> initMandalartItems(int id) async {
     try {
       final List<Map<String, dynamic>> itemMaps = await database!.rawQuery('SELECT * from Item where mandalArtId = $mandalartId');
-      if (itemMaps.length == 0) {
-        await createTables(id);
-      } else {
-        for (int index = 0; index < itemMaps.length; index ++) {
-          dynamic item = itemMaps[index];
-          int mId = item['mandalArtId'];
-          int parent = item['parent'];
-          int no = item['no'];
+      if (itemMaps.length == 0) { return await createTables(id); }
 
-          if (mandalart[mId]!.items[parent] == null) {
-            mandalart[mId]!.items[parent] = {};
-          }
-          ItemModel newItem = ItemModel(id: item['id'], mandalArtId: mId, group: parent, index: no, content: item['content']);
-          mandalart[mId]!.items[parent]![no] = newItem;
-          if (no == 4) {
-            if (mandalart[mId]!.items[4] == null) { mandalart[mId]!.items[4] = {}; }
-            mandalart[mId]!.items[4]![parent] = newItem;
-          }
+      final List<Map<String, dynamic>> todoMaps = await database!.rawQuery('SELECT * from Todo where mandalArtId = $mandalartId');
+      final Map<int, List<TodoModel>> todo = {};
+
+      for (int index = 0; index < todoMaps.length; index ++) {
+        int parent = todoMaps[index]['parent'];
+        if (todo[parent] == null) { todo[parent] = []; }
+        todo[parent]!.add(TodoModel.fromJson(todoMaps[index]));
+      }
+      for (int index = 0; index < itemMaps.length; index ++) {
+        dynamic item = itemMaps[index];
+        int mId = item['mandalArtId'];
+        int parent = item['parent'];
+        int no = item['no'];
+        int id = item['id'];
+
+        if (mandalart[mId]!.items[parent] == null) {
+          mandalart[mId]!.items[parent] = {};
+        }
+        ItemModel newItem = ItemModel(id: id, mandalArtId: mId, group: parent, index: no, content: item['content'], todos: todo[id] ?? []);
+        mandalart[mId]!.items[parent]![no] = newItem;
+        if (no == 4) {
+          if (mandalart[mId]!.items[4] == null) { mandalart[mId]!.items[4] = {}; }
+          mandalart[mId]!.items[4]![parent] = newItem;
         }
       }
     } catch (_) { rethrow; }
@@ -168,9 +179,8 @@ class DataController extends GetxController {
     mandalart.refresh();
   }
 
-
   Future<ItemModel> _insert(int mandalArtId, int group, int index) async {
-    ItemModel item = ItemModel(id: 0, mandalArtId: mandalArtId, group: group, index: index);
+    ItemModel item = ItemModel(id: 0, mandalArtId: mandalArtId, group: group, index: index, todos: []);
     try {
       int id = await database!.insert(
         'Item',
@@ -188,5 +198,22 @@ class DataController extends GetxController {
       mandalart[mandalArtId]!.items[4]![group] = item;
     }
     return item;
+  }
+
+  Future<TodoModel?> createTodo(int group, int index, String content) async {
+    ItemModel? item = mandalart[mandalartId.value!]?.items[group]?[index];
+    if (item == null) { return null; }
+    TodoModel todo = TodoModel(id: 0, parent: item.id, mandalArtId: mandalartId.value!, content: content);
+    try {
+      int id = await database!.insert(
+        'Todo',
+        todo.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+      todo.id = id;
+    } catch (_) { return null; }
+    mandalart[mandalartId.value!]!.items[group]![index]!.todos.add(todo);
+    mandalart.refresh();
+    return todo;
   }
 }

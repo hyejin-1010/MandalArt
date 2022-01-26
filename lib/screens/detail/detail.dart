@@ -4,7 +4,6 @@ import 'package:madal_art/common/functions.dart';
 import 'package:madal_art/components/edit_sheet.dart';
 import 'package:madal_art/controllers/data_controller.dart';
 import 'package:madal_art/components/item.dart';
-import 'package:madal_art/dialogs/edit_dialog.dart';
 import 'package:madal_art/models/item.dart';
 import 'package:madal_art/screens/detail/components/map.dart';
 
@@ -53,7 +52,9 @@ class _DetailScreenState extends State<DetailScreen> {
         if (item == null) { return; }
 
         Get.bottomSheet(EditSheet(
-          content: item.content,
+          group: widget.index,
+          index: index,
+          item: item,
           onSave: (String content) {
             _dataController.updateItem(widget.index, index, content);
           },

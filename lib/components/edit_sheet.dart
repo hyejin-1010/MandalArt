@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:madal_art/common/theme.dart';
+import 'package:madal_art/controllers/data_controller.dart';
+import 'package:madal_art/models/item.dart';
+import 'package:madal_art/models/todo.dart';
 
 class EditSheet extends StatefulWidget {
   EditSheet({
     Key? key,
-    required this.content,
+    required this.group,
+    required this.index,
+    required this.item,
     required this.onSave,
   }) : super(key: key);
 
-  final String content;
+  final int group;
+  final int index;
+  final ItemModel item;
   final Function(String) onSave;
 
   @override
@@ -17,15 +24,21 @@ class EditSheet extends StatefulWidget {
 }
 
 class _EditSheetState extends State<EditSheet> with TickerProviderStateMixin {
+  final DataController _dataController = Get.find<DataController>();
+
   late AnimationController _animationController;
   final TextEditingController _textEditingController = TextEditingController();
+  final TextEditingController _todoEditingController = TextEditingController();
+
+  List<TodoModel> _todos = [];
   bool _updated = true;
 
   @override
   void initState() {
     super.initState();
     _animationController = BottomSheet.createAnimationController(this);
-    _textEditingController.text = widget.content;
+    _textEditingController.text = widget.item.content;
+    _todos = widget.item.todos;
   }
 
   Widget _buildHeader() {
@@ -76,6 +89,49 @@ class _EditSheetState extends State<EditSheet> with TickerProviderStateMixin {
     );
   }
 
+  Widget _buildTodoListBox() {
+    return Column(
+      children: <Widget>[
+        Container(
+          margin: const EdgeInsets.only(top: 25.0, bottom: 15.0),
+          alignment: Alignment.topLeft,
+          child: Text(
+            'TODO',
+            style: TextStyle(
+              fontWeight: FontWeight.w900,
+              fontSize: CommonTheme.large,
+            ),
+          ),
+        ),
+        TextField(
+          controller: _todoEditingController,
+          decoration: InputDecoration(hintText: '할 일 생성'),
+          onSubmitted: (String? text) {
+            if (text?.isNotEmpty != true) { return; }
+            _createTodo(text!);
+          },
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: _todos.map<Widget>((TodoModel todo) {
+                return Container(
+                  padding: const EdgeInsets.symmetric(vertical: 5.0),
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    todo.content,
+                    style: TextStyle(fontSize: CommonTheme.small),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BottomSheet(
@@ -91,6 +147,7 @@ class _EditSheetState extends State<EditSheet> with TickerProviderStateMixin {
                 _buildHeader(),
                 const SizedBox(height: 20.0),
                 _buildTextField(),
+                Expanded(child: _buildTodoListBox()),
               ],
             ),
           ),
@@ -100,7 +157,7 @@ class _EditSheetState extends State<EditSheet> with TickerProviderStateMixin {
   }
 
   void _save() {
-    if (widget.content != _textEditingController.text) {
+    if (widget.item.content != _textEditingController.text) {
       widget.onSave(_textEditingController.text);
     }
     _back();
@@ -108,5 +165,14 @@ class _EditSheetState extends State<EditSheet> with TickerProviderStateMixin {
 
   void _back() {
     Get.back();
+  }
+
+  void _createTodo(String content) async {
+    try {
+      TodoModel? todo = await _dataController.createTodo(widget.group, widget.index, content);
+      if (todo == null) { return; }
+      _todoEditingController.text = '';
+      setState(() { });
+    } catch (_) { }
   }
 }
