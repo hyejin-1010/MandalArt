@@ -31,6 +31,14 @@ class _TodoListState extends State<TodoList> {
       padding: const EdgeInsets.symmetric(vertical: 5.0),
       child: Row(
         children: <Widget>[
+          InkWell(
+            onTap: () => _clickCheck(todo),
+            child: Icon(
+              todo.isDone ? Icons.check_circle : Icons.circle_outlined,
+              color: Theme.of(context).primaryColor,
+            ),
+          ),
+          const SizedBox(width: 15.0),
           Expanded(
             child: _focusTodo?.id == todo.id
               ? FocusScope(child: Focus(
@@ -116,5 +124,12 @@ class _TodoListState extends State<TodoList> {
     }
     _editTodoController[todo.id]!.text = todo.content;
     setState(() { _focusTodo = todo; });
+  }
+
+  void _clickCheck(TodoModel todo) async {
+    try {
+      await _dataController.updateTodoDone(todo);
+      setState(() {});
+    } catch (_) {}
   }
 }

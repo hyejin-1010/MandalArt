@@ -228,4 +228,16 @@ class DataController extends GetxController {
       return result > 0;
     } catch (_) { return false; }
   }
+
+  Future<bool> updateTodoDone(TodoModel todo) async {
+    if (database == null) { return false; }
+    try {
+      int result = await database!.rawUpdate(
+        'UPDATE Todo SET isDone = ? WHERE id = ?',
+        [!todo.isDone, todo.id],
+      );
+      todo.isDone = !todo.isDone;
+      return result > 0;
+    } catch (_) { return false; }
+  }
 }
