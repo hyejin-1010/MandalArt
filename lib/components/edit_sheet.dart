@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:madal_art/common/theme.dart';
+import 'package:madal_art/components/todo_list.dart';
 import 'package:madal_art/controllers/data_controller.dart';
 import 'package:madal_art/models/item.dart';
 import 'package:madal_art/models/todo.dart';
@@ -89,49 +90,6 @@ class _EditSheetState extends State<EditSheet> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildTodoListBox() {
-    return Column(
-      children: <Widget>[
-        Container(
-          margin: const EdgeInsets.only(top: 25.0, bottom: 15.0),
-          alignment: Alignment.topLeft,
-          child: Text(
-            'TODO',
-            style: TextStyle(
-              fontWeight: FontWeight.w900,
-              fontSize: CommonTheme.large,
-            ),
-          ),
-        ),
-        TextField(
-          controller: _todoEditingController,
-          decoration: InputDecoration(hintText: '할 일 생성'),
-          onSubmitted: (String? text) {
-            if (text?.isNotEmpty != true) { return; }
-            _createTodo(text!);
-          },
-        ),
-        Expanded(
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: _todos.map<Widget>((TodoModel todo) {
-                return Container(
-                  padding: const EdgeInsets.symmetric(vertical: 5.0),
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    todo.content,
-                    style: TextStyle(fontSize: CommonTheme.small),
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return BottomSheet(
@@ -147,7 +105,7 @@ class _EditSheetState extends State<EditSheet> with TickerProviderStateMixin {
                 _buildHeader(),
                 const SizedBox(height: 20.0),
                 _buildTextField(),
-                Expanded(child: _buildTodoListBox()),
+                Expanded(child: TodoList(todos: _todos, createTodo: _createTodo)),
               ],
             ),
           ),
