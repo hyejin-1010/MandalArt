@@ -216,4 +216,16 @@ class DataController extends GetxController {
     mandalart.refresh();
     return todo;
   }
+
+  Future<bool> updateTodo(TodoModel todo, String content) async {
+    if (database == null) { return false; }
+    try {
+      int result = await database!.rawUpdate(
+        'UPDATE Todo SET content = ? WHERE id = ?',
+        [content, todo.id],
+      );
+      todo.content = content;
+      return result > 0;
+    } catch (_) { return false; }
+  }
 }
