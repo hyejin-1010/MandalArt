@@ -240,4 +240,13 @@ class DataController extends GetxController {
       return result > 0;
     } catch (_) { return false; }
   }
+
+  Future<bool> deleteTodo(int group, int index, TodoModel todo) async {
+    if (database == null) { return false; }
+    try {
+      int result = await database!.rawDelete('DELETE From Todo WHERE id = ?', [todo.id]);
+      currentMandalart!.items[group]![index]!.todos.remove(todo);
+      return result > 0;
+    } catch (_) { return false; }
+  }
 }

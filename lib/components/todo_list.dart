@@ -5,14 +5,16 @@ import 'package:madal_art/controllers/data_controller.dart';
 import 'package:madal_art/models/todo.dart';
 
 class TodoList extends StatefulWidget {
-  TodoList({
+  const TodoList({
     Key? key,
     required this.todos,
     required this.createTodo,
+    required this.deleteTodo,
   }) : super(key: key);
 
   final List<TodoModel> todos;
   final Function(String) createTodo;
+  final Function(TodoModel) deleteTodo;
 
   @override
   State<TodoList> createState() => _TodoListState();
@@ -53,6 +55,12 @@ class _TodoListState extends State<TodoList> {
             onPressed: () => _clickEditButton(todo),
             icon: Icon(Icons.edit),
             iconSize: CommonTheme.small,
+          ),
+          IconButton(
+            onPressed: () => widget.deleteTodo(todo),
+            icon: Icon(Icons.delete),
+            iconSize: CommonTheme.small,
+            color: Colors.red,
           ),
         ],
       ),

@@ -105,7 +105,11 @@ class _EditSheetState extends State<EditSheet> with TickerProviderStateMixin {
                 _buildHeader(),
                 const SizedBox(height: 20.0),
                 _buildTextField(),
-                Expanded(child: TodoList(todos: _todos, createTodo: _createTodo)),
+                Expanded(child: TodoList(
+                  todos: _todos,
+                  createTodo: _createTodo,
+                  deleteTodo: _deleteTodo,
+                )),
               ],
             ),
           ),
@@ -132,5 +136,12 @@ class _EditSheetState extends State<EditSheet> with TickerProviderStateMixin {
       _todoEditingController.text = '';
       setState(() { });
     } catch (_) { }
+  }
+
+  void _deleteTodo(TodoModel todo) async {
+    try {
+      await _dataController.deleteTodo(widget.group, widget.index, todo);
+    } catch (_) {}
+    setState(() { });
   }
 }
