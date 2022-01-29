@@ -24,6 +24,7 @@ class _TodoListState extends State<TodoList> {
   final DataController _dataController = Get.find<DataController>();
   final TextEditingController _todoEditingController = TextEditingController();
   final Map<int, TextEditingController> _editTodoController = {};
+  final Map<int, FocusNode> _editFocusNode = {};
 
   TodoModel? _focusTodo;
 
@@ -45,7 +46,11 @@ class _TodoListState extends State<TodoList> {
             child: _focusTodo?.id == todo.id
               ? FocusScope(child: Focus(
                 onFocusChange: (bool focus) => _onFocusChange(todo, focus),
-                child: TextField(controller: _editTodoController[todo.id]),
+                child: TextField(
+                  controller: _editTodoController[todo.id],
+                  focusNode: _editFocusNode[todo.id],
+                  onSubmitted: (_) => _doneEditTodo(),
+                ),
               )) : Text(
                 todo.content,
                 style: TextStyle(fontSize: CommonTheme.xSmall),
@@ -86,10 +91,7 @@ class _TodoListState extends State<TodoList> {
           controller: _todoEditingController,
           decoration: InputDecoration(hintText: '새로운 할 일'),
           style: TextStyle(fontSize: CommonTheme.xSmall),
-          onSubmitted: (String? text) {
-            if (text?.isNotEmpty != true) { return; }
-            widget.createTodo(text!);
-          },
+          onSubmitted: _createTodo,
         ),
         Expanded(
           child: ListView.separated(
@@ -102,6 +104,13 @@ class _TodoListState extends State<TodoList> {
         ),
       ],
     );
+  }
+
+  void _doneEditTodo() async {
+    try {
+      await _updateTodo();
+      _editFocusNode[_focusTodo!.id]!.unfocus();
+    } catch (_) {}
   }
 
   Future<void> _updateTodo() async {
@@ -129,6 +138,7 @@ class _TodoListState extends State<TodoList> {
     } catch (_) {}
     if (_editTodoController[todo.id] == null) {
       _editTodoController[todo.id] = TextEditingController();
+      _editFocusNode[todo.id] = FocusNode();
     }
     _editTodoController[todo.id]!.text = todo.content;
     setState(() { _focusTodo = todo; });
@@ -139,5 +149,11 @@ class _TodoListState extends State<TodoList> {
       await _dataController.updateTodoDone(todo);
       setState(() {});
     } catch (_) {}
+  }
+
+  void _createTodo(String? text) {
+    if (text?.isNotEmpty != true) { return; }
+    widget.createTodo(text!);
+    _todoEditingController.text = '';
   }
 }
