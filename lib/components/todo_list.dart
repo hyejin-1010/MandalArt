@@ -25,7 +25,6 @@ class _TodoListState extends State<TodoList> {
   final TextEditingController _todoEditingController = TextEditingController();
   final Map<int, TextEditingController> _editTodoController = {};
   final Map<int, FocusNode> _editFocusNode = {};
-
   TodoModel? _focusTodo;
 
   Widget _buildTodoItem(int index) {
@@ -80,7 +79,7 @@ class _TodoListState extends State<TodoList> {
           margin: const EdgeInsets.only(top: 25.0, bottom: 15.0),
           alignment: Alignment.topLeft,
           child: Text(
-            'TODO',
+            'TODO (${widget.todos.length})',
             style: TextStyle(
               fontWeight: FontWeight.w900,
               fontSize: CommonTheme.medium,

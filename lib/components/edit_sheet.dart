@@ -26,39 +26,24 @@ class EditSheet extends StatefulWidget {
 
 class _EditSheetState extends State<EditSheet> with TickerProviderStateMixin {
   final DataController _dataController = Get.find<DataController>();
-
-  late AnimationController _animationController;
-  final TextEditingController _textEditingController = TextEditingController();
+  final TextEditingController _newTodoEditingController = TextEditingController();
   final TextEditingController _todoEditingController = TextEditingController();
-
+  late AnimationController _animationController;
   List<TodoModel> _todos = [];
-  bool _updated = true;
 
   @override
   void initState() {
     super.initState();
     _animationController = BottomSheet.createAnimationController(this);
-    _textEditingController.text = widget.item.content;
+    _newTodoEditingController.text = widget.item.content;
     _todos = widget.item.todos;
   }
 
   Widget _buildHeader() {
-    if (!_updated) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          IconButton(
-            onPressed: _back,
-            icon: Icon(Icons.cancel),
-          ),
-        ],
-      );
-    }
-
     return Row(
       children: <Widget>[
         TextButton(
-          onPressed: _back,
+          onPressed: () => Get.back(),
           child: Text(
             '취소',
             style: TextStyle(fontSize: CommonTheme.small),
@@ -74,7 +59,10 @@ class _EditSheetState extends State<EditSheet> with TickerProviderStateMixin {
         )),
         TextButton(
           onPressed: _save,
-          child: Text('저장'),
+          child: Text(
+            '저장',
+            style: TextStyle(fontSize: CommonTheme.small),
+          ),
         ),
       ],
     );
@@ -82,10 +70,8 @@ class _EditSheetState extends State<EditSheet> with TickerProviderStateMixin {
 
   Widget _buildTextField() {
     return TextField(
-      controller: _textEditingController,
-      decoration: InputDecoration(
-        hintText: '목표를 입력하세요.',
-      ),
+      controller: _newTodoEditingController,
+      decoration: InputDecoration(hintText: '목표를 입력하세요.'),
       style: TextStyle(fontSize: CommonTheme.medium),
     );
   }
@@ -94,8 +80,7 @@ class _EditSheetState extends State<EditSheet> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return BottomSheet(
       animationController: _animationController,
-      onClosing: () {
-      },
+      onClosing: _onClosing,
       builder: (BuildContext context) {
         return Scaffold(
           body: Container(
@@ -119,13 +104,9 @@ class _EditSheetState extends State<EditSheet> with TickerProviderStateMixin {
   }
 
   void _save() {
-    if (widget.item.content != _textEditingController.text) {
-      widget.onSave(_textEditingController.text);
+    if (widget.item.content != _newTodoEditingController.text) {
+      widget.onSave(_newTodoEditingController.text);
     }
-    _back();
-  }
-
-  void _back() {
     Get.back();
   }
 
@@ -144,4 +125,6 @@ class _EditSheetState extends State<EditSheet> with TickerProviderStateMixin {
     } catch (_) {}
     setState(() { });
   }
+
+  void _onClosing() {}
 }
