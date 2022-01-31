@@ -73,16 +73,31 @@ class _TodoListState extends State<TodoList> {
 
   @override
   Widget build(BuildContext context) {
+    int doneTodoCount = widget.todos.where((todo) => todo.isDone).length;
+    int percentage = widget.todos.length == 0 ? 0 : ((doneTodoCount / widget.todos.length) * 100).toInt();
+
     return Column(
       children: <Widget>[
         Container(
-          margin: const EdgeInsets.only(top: 25.0, bottom: 15.0),
+          margin: const EdgeInsets.only(top: 25.0),
           alignment: Alignment.topLeft,
           child: Text(
-            'TODO (${widget.todos.length})',
+            'TODO (${widget.todos.length}, $percentage%)',
             style: TextStyle(
               fontWeight: FontWeight.w900,
               fontSize: CommonTheme.medium,
+            ),
+          ),
+        ),
+        Container(
+          margin: const EdgeInsets.only(top: 5.0, bottom: 10.0),
+          alignment: Alignment.topLeft,
+          child: Text(
+            '성취율 : $percentage%',
+            style: TextStyle(
+              fontWeight: FontWeight.w800,
+              fontSize: CommonTheme.small,
+              color: Theme.of(context).primaryColor,
             ),
           ),
         ),
