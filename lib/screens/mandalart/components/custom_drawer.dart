@@ -114,7 +114,7 @@ class CustomDrawer extends StatelessWidget {
   }
 
   void _goToSettingScreen() {
-    Get.to(SettingsScreen());
+    Get.to(() => SettingsScreen());
   }
 
   void _clickAddMandalartButton() {

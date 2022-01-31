@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 class MandalArtMap extends StatelessWidget {
-  int index;
-  double size;
-
-  MandalArtMap({
+  const MandalArtMap({
     required this.index,
     required this.size,
   });
+
+  final int index;
+  final double size;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class MandalArtMap extends StatelessWidget {
         itemBuilder: (BuildContext context, int i) {
           return Container(
             decoration: BoxDecoration(
-              border: Border.all(color: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.5)),
+              border: Border.all(color: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.5), width: 0.3),
               color: index == i ? Theme.of(context).colorScheme.primary : Theme.of(context).backgroundColor,
             ),
           );

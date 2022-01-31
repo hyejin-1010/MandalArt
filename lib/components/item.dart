@@ -19,9 +19,9 @@ class Item extends StatelessWidget {
   final SettingController _settingController = Get.find<SettingController>();
   final Function(int)? onClick;
 
-  Widget _buildMandalArtText(BuildContext context, bool isTop, String text) {
+  Widget _buildMandalArtText(BuildContext context, int index, String text) {
     double fontSize = _settingController.fontSize.value;
-    if (allView) { fontSize = CommonTheme.small; }
+    if (allView) { fontSize = CommonTheme.xxSmall; }
 
     return Text(
       text,
@@ -29,10 +29,32 @@ class Item extends StatelessWidget {
       style: TextStyle(
         color: Theme.of(context).colorScheme.secondaryContainer,
         fontSize: fontSize,
-        fontWeight: isTop ? FontWeight.bold : FontWeight.normal,
+        fontWeight: (index == 4 || group == 4) ? FontWeight.bold : FontWeight.normal,
         overflow: TextOverflow.ellipsis,
       ),
       maxLines: allView ? 2 : 3,
+    );
+  }
+
+  Widget _buildItem(BuildContext context, int index, String text) {
+    Color backgroundColor = Theme.of(context).backgroundColor;
+    if (index == 4 || group == 4) {
+      backgroundColor = Theme.of(context).colorScheme.primary;
+      if (group != 4 || index != 4) {
+        backgroundColor = backgroundColor.withOpacity(0.4);
+      }
+    }
+
+    return Material(
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey, width: 0.5),
+          color: backgroundColor,
+        ),
+        child: Center(
+          child: _buildMandalArtText(context, index, text),
+        ),
+      ),
     );
   }
 
@@ -52,19 +74,14 @@ class Item extends StatelessWidget {
           return Obx(() {
             ItemModel? item = _dataController.mandalart[_dataController.mandalartId.value]?.items[group]?[index];
             String text = item?.content ?? '';
-            bool isTop = item?.top ?? false;
+            bool? beforeAllView = Get.arguments?['allView'];
 
             return GestureDetector(
               onTap: onClick != null ? () => onClick!(index) : null,
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey, width: 1.0),
-                  color: isTop ? Theme.of(context).colorScheme.primary : Theme.of(context).backgroundColor,
-                ),
-                child: Center(
-                  child: _buildMandalArtText(context, isTop, text),
-                ),
-              ),
+              child: (index == 4 && beforeAllView == false) ? Hero(
+                tag: 'mandal-item-$group-$index',
+                child: _buildItem(context, index, text),
+              ) : _buildItem(context, index, text),
             );
           });
         },

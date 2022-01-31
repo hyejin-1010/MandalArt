@@ -1,9 +1,12 @@
+import 'package:madal_art/models/todo.dart';
+
 class ItemModel {
   int id;
   final int mandalArtId;
   final int group;
   final int index;
   String content;
+  List<TodoModel> todos;
 
   bool get top { return index == 4; }
 
@@ -13,6 +16,7 @@ class ItemModel {
     required this.group,
     required this.index,
     this.content = '',
+    required this.todos,
   });
 
   Map<String, dynamic> toMap() {
@@ -31,6 +35,7 @@ class ItemModel {
       group: json['parent'],
       index: json['no'],
       content: json['content'],
+      todos: [],
     );
   }
 }
