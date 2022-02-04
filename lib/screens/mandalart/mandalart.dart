@@ -4,6 +4,7 @@ import 'package:madal_art/common/functions.dart';
 import 'package:madal_art/controllers/data_controller.dart';
 import 'package:madal_art/screens/detail/detail.dart';
 import 'package:madal_art/components/item.dart';
+import 'package:madal_art/screens/mandalart/components/all_view_switch.dart';
 import 'package:madal_art/screens/mandalart/components/custom_drawer.dart';
 import 'package:madal_art/screens/mandalart/components/top_view_item.dart';
 
@@ -62,25 +63,6 @@ class _MandalArtScreenState extends State<MandalArtScreen> {
     );
   }
 
-  Widget _buildViewTypeSwitchButton() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: <Widget>[
-        Text(
-          'All View',
-          style: TextStyle(
-            color: Theme.of(context).primaryColor,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Switch(
-          value: _viewType == ViewType.ALL,
-          onChanged: _onChangeViewType,
-        ),
-      ],
-    );
-  }
-
   AppBar _buildAppBar() {
     return AppBar(
       backgroundColor: Colors.transparent,
@@ -103,7 +85,7 @@ class _MandalArtScreenState extends State<MandalArtScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            _buildViewTypeSwitchButton(),
+            AllViewSwitchButton(viewType: _viewType, onChange: _onChangeViewType),
             Obx(() {
               if (_dataController.currentMandalart == null) { return Container(); }
               return Center(child: _buildMandalArtAllView());
