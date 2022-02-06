@@ -28,6 +28,20 @@ class _MainColorSettingState extends State<MainColorSetting> {
     _originMainColor = _mainColor = _settingController.mainColor.value;
   }
 
+  Widget _buildColorItem(Map<String, dynamic> color) {
+    bool selected = color['value'] == _mainColor;
+
+    return InkWell(
+      onTap: () => _clickColor(color),
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 5.0),
+        height: 90.0,
+        color: color['color'],
+        child: selected ? Icon(Icons.check) : null,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,18 +60,7 @@ class _MainColorSettingState extends State<MainColorSetting> {
         padding: EdgeInsets.symmetric(vertical: 30.0, horizontal: 25.0),
         child: Row(
           children: colors.map((color) {
-            bool selected = color['value'] == _mainColor;
-            return Expanded(
-              child: InkWell(
-                onTap: () => _clickColor(color),
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 5.0),
-                  height: 90.0,
-                  color: color['color'],
-                  child: selected ? Icon(Icons.check) : null,
-                ),
-              ),
-            );
+            return Expanded(child: _buildColorItem(color));
           }).toList(),
         ),
       ),
