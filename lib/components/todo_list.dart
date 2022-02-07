@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:madal_art/common/theme.dart';
+import 'package:madal_art/dialogs/todo_action_dialog.dart';
 import 'package:madal_art/controllers/data_controller.dart';
 import 'package:madal_art/models/todo.dart';
 
@@ -49,6 +50,7 @@ class _TodoListState extends State<TodoList> {
                   controller: _editTodoController[todo.id],
                   focusNode: _editFocusNode[todo.id],
                   onSubmitted: (_) => _doneEditTodo(),
+                  style: TextStyle(fontSize: CommonTheme.xSmall),
                 ),
               )) : Text(
                 todo.content,
@@ -56,15 +58,10 @@ class _TodoListState extends State<TodoList> {
               ),
           ),
           IconButton(
-            onPressed: () => _clickEditButton(todo),
-            icon: Icon(Icons.edit),
-            iconSize: CommonTheme.small,
-          ),
-          IconButton(
-            onPressed: () => widget.deleteTodo(todo),
-            icon: Icon(Icons.delete),
-            iconSize: CommonTheme.small,
-            color: Colors.red,
+            onPressed: () => _clickMoreButton(todo),
+            icon: Icon(Icons.more_vert),
+            iconSize: CommonTheme.medium,
+            color: Colors.grey,
           ),
         ],
       ),
@@ -144,6 +141,17 @@ class _TodoListState extends State<TodoList> {
       await _updateTodo();
     } catch (_) {}
     setState(() { _focusTodo = null; });
+  }
+
+  void _clickMoreButton(TodoModel todo) {
+    Get.dialog(TodoActionDialog(
+      onClick: (String type) {
+        switch (type) {
+          case 'edit': return _clickEditButton(todo);
+          case 'delete': return widget.deleteTodo(todo);
+        }
+      },
+    ));
   }
 
   void _clickEditButton(TodoModel todo) async {
