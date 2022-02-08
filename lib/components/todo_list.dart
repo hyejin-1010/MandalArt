@@ -28,6 +28,36 @@ class _TodoListState extends State<TodoList> {
   final Map<int, FocusNode> _editFocusNode = {};
   TodoModel? _focusTodo;
 
+  Widget _buildTodoItemContent(TodoModel todo) {
+    bool isFocus = _focusTodo?.id == todo.id;
+    return GestureDetector(
+      onTap: isFocus ? null : () => _clickMoreButton(todo),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: isFocus ? FocusScope(child: Focus(
+              onFocusChange: (bool focus) => _onFocusChange(todo, focus),
+              child: TextField(
+                controller: _editTodoController[todo.id],
+                focusNode: _editFocusNode[todo.id],
+                onSubmitted: (_) => _doneEditTodo(),
+                style: TextStyle(fontSize: CommonTheme.xSmall),
+              ),
+            )) : Text(
+              todo.content,
+              style: TextStyle(fontSize: CommonTheme.xSmall),
+            ),
+          ),
+          Icon(
+            Icons.more_vert,
+            size: CommonTheme.medium,
+            color: Colors.grey,
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildTodoItem(int index) {
     TodoModel todo = widget.todos[index];
     return Container(
@@ -42,26 +72,33 @@ class _TodoListState extends State<TodoList> {
             ),
           ),
           const SizedBox(width: 15.0),
-          Expanded(
-            child: _focusTodo?.id == todo.id
-              ? FocusScope(child: Focus(
-                onFocusChange: (bool focus) => _onFocusChange(todo, focus),
-                child: TextField(
-                  controller: _editTodoController[todo.id],
-                  focusNode: _editFocusNode[todo.id],
-                  onSubmitted: (_) => _doneEditTodo(),
-                  style: TextStyle(fontSize: CommonTheme.xSmall),
-                ),
-              )) : Text(
-                todo.content,
-                style: TextStyle(fontSize: CommonTheme.xSmall),
-              ),
-          ),
-          IconButton(
-            onPressed: () => _clickMoreButton(todo),
-            icon: Icon(Icons.more_vert),
-            iconSize: CommonTheme.medium,
-            color: Colors.grey,
+          Expanded(child: _buildTodoItemContent(todo)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTodoHeader() {
+    int doneTodoCount = widget.todos.where((todo) => todo.isDone).length;
+    int percentage = widget.todos.length == 0 ? 0 : ((doneTodoCount / widget.todos.length) * 100).toInt();
+
+    return Container(
+      margin: const EdgeInsets.only(top: 25.0),
+      child: Row(
+        children: <Widget>[
+          Expanded(child: Text(
+              'TODO (${widget.todos.length})',
+              style: TextStyle(
+                fontWeight: FontWeight.w900,
+                fontSize: CommonTheme.medium,
+              ))),
+          Text(
+            '성취율 : $percentage%',
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: CommonTheme.xSmall,
+              color: Theme.of(context).primaryColor,
+            ),
           ),
         ],
       ),
@@ -70,40 +107,16 @@ class _TodoListState extends State<TodoList> {
 
   @override
   Widget build(BuildContext context) {
-    int doneTodoCount = widget.todos.where((todo) => todo.isDone).length;
-    int percentage = widget.todos.length == 0 ? 0 : ((doneTodoCount / widget.todos.length) * 100).toInt();
-
     return Column(
       children: <Widget>[
-        Container(
-          margin: const EdgeInsets.only(top: 25.0),
-          alignment: Alignment.topLeft,
-          child: Text(
-            'TODO (${widget.todos.length}, $percentage%)',
-            style: TextStyle(
-              fontWeight: FontWeight.w900,
-              fontSize: CommonTheme.medium,
-            ),
-          ),
-        ),
-        Container(
-          margin: const EdgeInsets.only(top: 5.0, bottom: 10.0),
-          alignment: Alignment.topLeft,
-          child: Text(
-            '성취율 : $percentage%',
-            style: TextStyle(
-              fontWeight: FontWeight.w800,
-              fontSize: CommonTheme.small,
-              color: Theme.of(context).primaryColor,
-            ),
-          ),
-        ),
+        _buildTodoHeader(),
         TextField(
           controller: _todoEditingController,
           decoration: InputDecoration(hintText: '새로운 할 일'),
           style: TextStyle(fontSize: CommonTheme.xSmall),
           onSubmitted: _createTodo,
         ),
+        const SizedBox(height: 20.0),
         Expanded(
           child: ListView.separated(
             separatorBuilder: (_, __) => const Divider(),
