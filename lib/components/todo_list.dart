@@ -28,6 +28,20 @@ class _TodoListState extends State<TodoList> {
   final Map<int, FocusNode> _editFocusNode = {};
   TodoModel? _focusTodo;
 
+  List<TodoModel> _todos = [];
+  List<TodoModel> _doneTodos = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    for (int index = 0; index < widget.todos.length; index ++) {
+      if (widget.todos[index].isDone) {
+        _doneTodos.add(widget.todos[index]);
+      } else { _todos.add(widget.todos[index]); }
+    }
+  }
+
   Widget _buildTodoItemContent(TodoModel todo) {
     bool isFocus = _focusTodo?.id == todo.id;
     return GestureDetector(
@@ -58,10 +72,12 @@ class _TodoListState extends State<TodoList> {
     );
   }
 
-  Widget _buildTodoItem(int index) {
-    TodoModel todo = widget.todos[index];
+  Widget _buildTodoItem(TodoModel todo) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 5.0),
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: Colors.black12, width: 1.0))
+      ),
       child: Row(
         children: <Widget>[
           InkWell(
@@ -105,6 +121,25 @@ class _TodoListState extends State<TodoList> {
     );
   }
 
+  Widget _buildTodoContentBox() {
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          Column(
+            children: _todos.map<Widget>((todo) {
+              return _buildTodoItem(todo);
+            }).toList(),
+          ),
+          Column(
+            children: _doneTodos.map<Widget>((todo) {
+              return _buildTodoItem(todo);
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -117,15 +152,7 @@ class _TodoListState extends State<TodoList> {
           onSubmitted: _createTodo,
         ),
         const SizedBox(height: 20.0),
-        Expanded(
-          child: ListView.separated(
-            separatorBuilder: (_, __) => const Divider(),
-            itemCount: widget.todos.length,
-            itemBuilder: (BuildContext context, int index) {
-              return _buildTodoItem(index);
-            },
-          ),
-        ),
+        Expanded(child: _buildTodoContentBox()),
       ],
     );
   }
@@ -182,7 +209,14 @@ class _TodoListState extends State<TodoList> {
   void _clickCheck(TodoModel todo) async {
     try {
       await _dataController.updateTodoDone(todo);
-      setState(() {});
+      if (todo.isDone) {
+        _todos.remove(todo);
+        _doneTodos.add(todo);
+      } else {
+        _doneTodos.remove(todo);
+        _todos.add(todo);
+      }
+      setState(() { });
     } catch (_) {}
   }
 
