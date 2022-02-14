@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:madal_art/common/theme.dart';
 import 'package:madal_art/controllers/data_controller.dart';
@@ -14,28 +15,6 @@ class CustomDrawer extends StatelessWidget {
   final DataController _dataController = Get.find<DataController>();
   final SettingController _settingController = Get.find<SettingController>();
 
-  Widget _buildSettingButton() {
-    return InkWell(
-      onTap: _goToSettingScreen,
-      child: Container(
-        width: Size.infinite.width,
-        padding: EdgeInsets.symmetric(vertical: 15.0),
-        alignment: Alignment.center,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.settings),
-            SizedBox(width: 15.0),
-            Text(
-              '설정',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildCategoryListView() {
     return Obx(() {
       Map<int, MandalArtModel> mandalart = _dataController.mandalart;
@@ -50,7 +29,7 @@ class CustomDrawer extends StatelessWidget {
           int id = keys[index];
           bool selected = id == selectedMandalartId;
           return InkWell(
-            onTap: () => _clickMandalartTitle(id),
+            onTap: () => _clickMandalart(id),
             child: Container(
               padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
               child: Text(
@@ -68,6 +47,35 @@ class CustomDrawer extends StatelessWidget {
     });
   }
 
+  Widget _buildSettingIconButton(BuildContext context) {
+    return Container(
+      alignment: Alignment.topRight,
+      child: IconButton(
+        onPressed: () => Get.to(() => SettingsScreen()),
+        icon: Icon(Icons.settings),
+        color: Theme.of(context).primaryColor,
+      ),
+    );
+  }
+
+  Widget _createMandalartButton(BuildContext context) {
+    return InkWell(
+      onTap: _clickAddMandalartButton,
+      child: Container(
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(vertical: 7.0),
+        child: Text(
+          '+ 만다라트 추가하기',
+          style: TextStyle(
+            fontSize: CommonTheme.large,
+            color: Theme.of(context).primaryColor,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -76,61 +84,51 @@ class CustomDrawer extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           mainAxisSize: MainAxisSize.max,
           children: [
+            _buildSettingIconButton(context),
             SizedBox(height: 50.0),
             Container(
+              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
               alignment: Alignment.topRight,
-              child: TextButton(
-                onPressed: () => Get.to(CategoryListScreen()),
+              child: InkWell(
+                onTap: () => Get.to(CategoryListScreen()),
                 child: Text(
-                  '설정',
-                  style: TextStyle(fontSize: CommonTheme.small),
-                ),
-              ),
-            ),
-            Expanded(child: _buildCategoryListView()),
-            InkWell(
-              onTap: _clickAddMandalartButton,
-              child: Container(
-                alignment: Alignment.center,
-                padding: const EdgeInsets.symmetric(vertical: 7.0),
-                child: Text(
-                  '+ 만다라트 추가하기',
+                  '만다라트 관리',
                   style: TextStyle(
-                    fontSize: CommonTheme.large,
                     color: Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
             ),
-            _buildSettingButton(),
+            Expanded(child: _buildCategoryListView()),
+            _createMandalartButton(context),
           ],
         ),
       ),
     );
   }
 
-  void _clickMandalartTitle(int id) {
+  // 만다라트 리스트에서 만다라트 클릭 시,
+  void _clickMandalart(int id) {
     _dataController.changeMandalartId(id);
   }
 
-  void _goToSettingScreen() {
-    Get.to(() => SettingsScreen());
-  }
-
+  // 만다라트 추가하기 버튼 클릭 시
   void _clickAddMandalartButton() {
     Get.dialog(EditDialog(
       isItem: false,
       content: '',
-      done: (String title) {
-        _addMandalart(title);
-        Get.back();
-      },
+      done: _doneCreateMandalart,
     ));
   }
 
-  void _addMandalart(String title) async {
+  // 만다라트 추가 Dialog 에서 입력 완료 시
+  void _doneCreateMandalart(String title) async {
     try {
       await _dataController.createMandalArt(title);
-    } catch (_) {}
+      Get.back();
+    } catch (_) {
+      Fluttertoast.showToast(msg: '만다라트 생성에 실패하였습니다.\n잠시 후 다시 시도해주세요.');
+    }
   }
 }

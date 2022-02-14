@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:madal_art/common/theme.dart';
+import 'package:madal_art/dialogs/todo_action_dialog.dart';
 import 'package:madal_art/controllers/data_controller.dart';
 import 'package:madal_art/models/todo.dart';
 
@@ -27,10 +28,56 @@ class _TodoListState extends State<TodoList> {
   final Map<int, FocusNode> _editFocusNode = {};
   TodoModel? _focusTodo;
 
-  Widget _buildTodoItem(int index) {
-    TodoModel todo = widget.todos[index];
+  List<TodoModel> _todos = [];
+  List<TodoModel> _doneTodos = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    for (int index = 0; index < widget.todos.length; index ++) {
+      if (widget.todos[index].isDone) {
+        _doneTodos.add(widget.todos[index]);
+      } else { _todos.add(widget.todos[index]); }
+    }
+  }
+
+  Widget _buildTodoItemContent(TodoModel todo) {
+    bool isFocus = _focusTodo?.id == todo.id;
+    return GestureDetector(
+      onTap: isFocus ? null : () => _clickMoreButton(todo),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: isFocus ? FocusScope(child: Focus(
+              onFocusChange: (bool focus) => _onFocusChange(todo, focus),
+              child: TextField(
+                controller: _editTodoController[todo.id],
+                focusNode: _editFocusNode[todo.id],
+                onSubmitted: (_) => _doneEditTodo(),
+                style: TextStyle(fontSize: CommonTheme.xSmall),
+              ),
+            )) : Text(
+              todo.content,
+              style: TextStyle(fontSize: CommonTheme.xSmall),
+            ),
+          ),
+          Icon(
+            Icons.more_vert,
+            size: CommonTheme.medium,
+            color: Colors.grey,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTodoItem(TodoModel todo) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 5.0),
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: Colors.black12, width: 1.0))
+      ),
       child: Row(
         children: <Widget>[
           InkWell(
@@ -41,30 +88,52 @@ class _TodoListState extends State<TodoList> {
             ),
           ),
           const SizedBox(width: 15.0),
-          Expanded(
-            child: _focusTodo?.id == todo.id
-              ? FocusScope(child: Focus(
-                onFocusChange: (bool focus) => _onFocusChange(todo, focus),
-                child: TextField(
-                  controller: _editTodoController[todo.id],
-                  focusNode: _editFocusNode[todo.id],
-                  onSubmitted: (_) => _doneEditTodo(),
-                ),
-              )) : Text(
-                todo.content,
-                style: TextStyle(fontSize: CommonTheme.xSmall),
-              ),
+          Expanded(child: _buildTodoItemContent(todo)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTodoHeader() {
+    int doneTodoCount = widget.todos.where((todo) => todo.isDone).length;
+    int percentage = widget.todos.length == 0 ? 0 : ((doneTodoCount / widget.todos.length) * 100).toInt();
+
+    return Container(
+      margin: const EdgeInsets.only(top: 25.0),
+      child: Row(
+        children: <Widget>[
+          Expanded(child: Text(
+              'TODO (${widget.todos.length})',
+              style: TextStyle(
+                fontWeight: FontWeight.w900,
+                fontSize: CommonTheme.medium,
+              ))),
+          Text(
+            '성취율 : $percentage%',
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: CommonTheme.xSmall,
+              color: Theme.of(context).primaryColor,
+            ),
           ),
-          IconButton(
-            onPressed: () => _clickEditButton(todo),
-            icon: Icon(Icons.edit),
-            iconSize: CommonTheme.small,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTodoContentBox() {
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          Column(
+            children: _todos.map<Widget>((todo) {
+              return _buildTodoItem(todo);
+            }).toList(),
           ),
-          IconButton(
-            onPressed: () => widget.deleteTodo(todo),
-            icon: Icon(Icons.delete),
-            iconSize: CommonTheme.small,
-            color: Colors.red,
+          Column(
+            children: _doneTodos.map<Widget>((todo) {
+              return _buildTodoItem(todo);
+            }).toList(),
           ),
         ],
       ),
@@ -73,49 +142,17 @@ class _TodoListState extends State<TodoList> {
 
   @override
   Widget build(BuildContext context) {
-    int doneTodoCount = widget.todos.where((todo) => todo.isDone).length;
-    int percentage = widget.todos.length == 0 ? 0 : ((doneTodoCount / widget.todos.length) * 100).toInt();
-
     return Column(
       children: <Widget>[
-        Container(
-          margin: const EdgeInsets.only(top: 25.0),
-          alignment: Alignment.topLeft,
-          child: Text(
-            'TODO (${widget.todos.length}, $percentage%)',
-            style: TextStyle(
-              fontWeight: FontWeight.w900,
-              fontSize: CommonTheme.medium,
-            ),
-          ),
-        ),
-        Container(
-          margin: const EdgeInsets.only(top: 5.0, bottom: 10.0),
-          alignment: Alignment.topLeft,
-          child: Text(
-            '성취율 : $percentage%',
-            style: TextStyle(
-              fontWeight: FontWeight.w800,
-              fontSize: CommonTheme.small,
-              color: Theme.of(context).primaryColor,
-            ),
-          ),
-        ),
+        _buildTodoHeader(),
         TextField(
           controller: _todoEditingController,
           decoration: InputDecoration(hintText: '새로운 할 일'),
           style: TextStyle(fontSize: CommonTheme.xSmall),
           onSubmitted: _createTodo,
         ),
-        Expanded(
-          child: ListView.separated(
-            separatorBuilder: (_, __) => const Divider(),
-            itemCount: widget.todos.length,
-            itemBuilder: (BuildContext context, int index) {
-              return _buildTodoItem(index);
-            },
-          ),
-        ),
+        const SizedBox(height: 20.0),
+        Expanded(child: _buildTodoContentBox()),
       ],
     );
   }
@@ -146,6 +183,17 @@ class _TodoListState extends State<TodoList> {
     setState(() { _focusTodo = null; });
   }
 
+  void _clickMoreButton(TodoModel todo) {
+    Get.dialog(TodoActionDialog(
+      onClick: (String type) {
+        switch (type) {
+          case 'edit': return _clickEditButton(todo);
+          case 'delete': return widget.deleteTodo(todo);
+        }
+      },
+    ));
+  }
+
   void _clickEditButton(TodoModel todo) async {
     try {
       await _updateTodo();
@@ -161,7 +209,14 @@ class _TodoListState extends State<TodoList> {
   void _clickCheck(TodoModel todo) async {
     try {
       await _dataController.updateTodoDone(todo);
-      setState(() {});
+      if (todo.isDone) {
+        _todos.remove(todo);
+        _doneTodos.add(todo);
+      } else {
+        _doneTodos.remove(todo);
+        _todos.add(todo);
+      }
+      setState(() { });
     } catch (_) {}
   }
 

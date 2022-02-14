@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:madal_art/common/functions.dart';
 import 'package:madal_art/controllers/data_controller.dart';
-import 'package:madal_art/controllers/setting_controller.dart';
 import 'package:madal_art/screens/detail/detail.dart';
 import 'package:madal_art/components/item.dart';
+import 'package:madal_art/screens/mandalart/components/all_view_switch.dart';
 import 'package:madal_art/screens/mandalart/components/custom_drawer.dart';
+import 'package:madal_art/screens/mandalart/components/top_view_item.dart';
 
 class MandalArtScreen extends StatefulWidget {
   @override
@@ -16,37 +17,9 @@ enum ViewType { ALL, TOP }
 
 class _MandalArtScreenState extends State<MandalArtScreen> {
   final DataController _dataController = Get.find<DataController>();
-  final SettingController _settingController = Get.find<SettingController>();
-  late Size _size;
-  ViewType _viewType = ViewType.TOP;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _size = MediaQuery.of(context).size;
-  }
-
-  Widget _buildTopView(int index) {
-    return Material(
-      color: Colors.transparent,
-      child: Obx(() {
-        double fontSize = _settingController.fontSize.value;
-        return Container(
-          padding: EdgeInsets.symmetric(horizontal: 15.0),
-          child: Text(
-            _dataController.mandalart[_dataController.mandalartId.value]?.items[4]?[index]?.content ?? '',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: fontSize + 3.0,
-              fontWeight: index == 4 ? FontWeight.bold : FontWeight.w500,
-            ),
-          ),
-        );
-      }),
-    );
-  }
+  ViewType _viewType = ViewType.TOP;
 
   Widget _buildMandalArtItem(int index) {
     bool topView = _viewType == ViewType.TOP;
@@ -62,7 +35,7 @@ class _MandalArtScreenState extends State<MandalArtScreen> {
           ),
           alignment: Alignment.center,
           child: topView
-            ? _buildTopView(index)
+            ? TopViewItem(index: index)
             : Item(group: index, allView: true),
         ),
       ),
@@ -70,7 +43,8 @@ class _MandalArtScreenState extends State<MandalArtScreen> {
   }
 
   Widget _buildMandalArtAllView() {
-    final double mandalSize = Functions.getMandalSize(_size);
+    Size size = MediaQuery.of(context).size;
+    final double mandalSize = Functions.getMandalSize(size);
 
     return SizedBox(
       width: mandalSize,
@@ -86,25 +60,6 @@ class _MandalArtScreenState extends State<MandalArtScreen> {
           return _buildMandalArtItem(index);
         },
       ),
-    );
-  }
-
-  Widget _buildViewTypeSwitchButton() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: <Widget>[
-        Text(
-          'All View',
-          style: TextStyle(
-            color: Theme.of(context).primaryColor,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Switch(
-          value: _viewType == ViewType.ALL,
-          onChanged: _onChangeViewType,
-        ),
-      ],
     );
   }
 
@@ -130,7 +85,7 @@ class _MandalArtScreenState extends State<MandalArtScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            _buildViewTypeSwitchButton(),
+            AllViewSwitchButton(viewType: _viewType, onChange: _onChangeViewType),
             Obx(() {
               if (_dataController.currentMandalart == null) { return Container(); }
               return Center(child: _buildMandalArtAllView());
@@ -141,19 +96,22 @@ class _MandalArtScreenState extends State<MandalArtScreen> {
     );
   }
 
-  void _pushDetailView(int index) {
-    Get.to(() => DetailScreen(index: index), transition: Transition.fade, arguments: {
-      'allView': _viewType == ViewType.ALL,
-    });
-  }
-
+  // 상단 우측 메뉴 버튼 클릭 시
   void _openEndDrawer() {
     _scaffoldKey.currentState?.openEndDrawer();
   }
 
+  // All View Switch On Changed event
   void _onChangeViewType(bool? value) {
-    ViewType newValue = value == true ? ViewType.ALL : ViewType.TOP;
-    if (value == null || _viewType == newValue) { return; }
-    setState(() { _viewType = newValue; });
+    ViewType newViewType = value == true ? ViewType.ALL : ViewType.TOP;
+    if (value == null || _viewType == newViewType) { return; }
+    setState(() { _viewType = newViewType; });
+  }
+
+  // 만다라트 클릭 시, Detail View 로 이동
+  void _pushDetailView(int index) {
+    Get.to(() => DetailScreen(index: index), transition: Transition.fade, arguments: {
+      'allView': _viewType == ViewType.ALL,
+    });
   }
 }
